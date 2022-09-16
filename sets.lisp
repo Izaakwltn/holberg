@@ -46,15 +46,15 @@
 (defgeneric ascending (object)
   (:documentation "Sorts an object's list into an ascending order"))
 
-(defmethod ascending ((note-set note-set))
-  (make-collection (sort (note-list note-set)
+(defmethod ascending ((note-collection note-collection))
+  (make-collection (sort (note-list note-collection)
 		  #'lower-note-p)))
 
 (defgeneric descending (object)
   (:documentation "Sorts an object's list into a descending order"))
 
-(defmethod descending ((note-set note-set))
-  (make-collection (sort (note-list note-set)
+(defmethod descending ((note-collection note-collection))
+  (make-collection (sort (note-list note-collection)
 		  #'higher-note-p)))
 
 ;;; pitch class sets (probably move to a new file)
@@ -95,8 +95,8 @@
 (defun make-pc-set (pc-list)
   (make-instance 'pc-set :pc-list pc-list))
 
-(defmethod note-to-pc-set ((note-set note-set))
-  (make-pc-set (remove-duplicates (mapcar #'note-num (note-list note-set)))))
+(defmethod note-to-pc-set ((note-collection note-collection))
+  (make-pc-set (remove-duplicates (mapcar #'note-num (note-list note-collection)))))
 
 (defmethod ascending ((pc-set pc-set))
   (make-pc-set (sort (pc-list pc-set) #'<)))

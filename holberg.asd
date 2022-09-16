@@ -10,4 +10,5 @@
   :depends-on (#:alexandria)
   :serial t
   :components ((:file "package")
-	       (:file "notes")))
+	       (:file "notes")
+	       (:file "sets")))
