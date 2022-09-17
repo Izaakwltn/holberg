@@ -151,7 +151,7 @@
 		     (n-elem-name n-elem-name)
 		     (normalized normalized))
 	obj
-      (format stream "~a {~{ ~a~}}, Normal Form: {~{ ~a~}}" n-elem-name pc-set normalized))))
+      (format stream "~a {~{ ~a~}}, Normal Form: {~{ ~a~}}, quality: ~a" n-elem-name pc-set normalized)))) ; (find-quality pc-set)))))
 
 (defun make-pitch-class-set (pc-set)
   (check-type pc-set pc-set)

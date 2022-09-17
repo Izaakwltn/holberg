@@ -57,9 +57,27 @@
 
 (defvar *middle-c* (make-note 0 4))
 
-;;; Formatting systems:
+(defun higher-note-p (note1 note2)
+  "Returns whether a note is higher than another"
+  (cond ((> (octave note1) (octave note2))
+	 t)
+	((> (note-num note1) (note-num note2))
+	 t)
+	(t nil)))
 
+(defun lower-note-p (note1 note2)
+  "Returns whether note 1 is lower than note 2"
+  (cond ((< (octave note1) (octave note2))
+	 t)
+	((< (note-num note1) (note-num note2))
+	 t)
+	(t nil)))
+
+;;;
+;;; Formatting systems:
+;;;
 ;;; Using letter system
+;;;
 
 (defun note-name-p (i)
   (member i '(C C# Db D D# Eb E E# F F# Gb G G# Ab A A# Bb B B#)))

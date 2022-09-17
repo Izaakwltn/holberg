@@ -12,4 +12,6 @@
   :components ((:file "package")
 	       (:file "pitch-classes")
 	       (:file "pitch-class-sets")
-	       (:file "notes")))
+	       (:file "notes")
+	       (:file "collections")
+	       (:file "scales")))

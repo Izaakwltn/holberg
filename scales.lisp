@@ -93,3 +93,25 @@
 		   'natural-minor
 		   'major)
 	       (octlength scale)))
+
+;;; finding quality of a collection through pitch class set theory
+
+;(defun ascend-from-root-backend (ascending-pc-set root)
+ ; (cond ((equal (first ascending-pc-set) root) ascending-pc-set)
+;	(t (ascend-from-root-backend (permutate ascending-pc-set)))))
+;	   
+;(;defun ascend-from-root (pc-set)
+ ; "Returns the pc-set in ascending order, from the first note in the pc-set."
+  ;(ascend-from-root-backend (ascending pc-set) (first pc-set)))
+
+
+;(defun find-quality (pc-set)
+ ; (check-type pc-set pc-set)
+  ;(let* ((a-set (ascend-from-root pc-set))
+;	 (quality (find-if #'(lambda (i)
+;			       (equal (set-transpose a-set (- (first a-set)))
+;				      (second i)))
+;			  mode-list)))
+ ;   (if quality
+;	(first quality)
+;	'unclear)))
