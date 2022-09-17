@@ -10,5 +10,6 @@
   :depends-on (#:alexandria)
   :serial t
   :components ((:file "package")
-	       (:file "notes")
-	       (:file "sets")))
+	       (:file "pitch-classes")
+	       (:file "pitch-class-sets")
+	       (:file "notes")))
