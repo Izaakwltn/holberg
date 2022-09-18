@@ -9,5 +9,10 @@
   :description "A Module for building and analyzing 12-tone serial rows and matrices."
   :depends-on (#:holberg)
   :serial t
-  :components ((:file "package")
-	       (:file "rows")))
+  :components ((:module "seria"
+	       :serial t ; well of course it's serial...
+	       :components ((:file "package")
+			    (:file "rows")
+			    (:file "row-functions")
+			    (:file "matrices")
+			    (:file "format")))))

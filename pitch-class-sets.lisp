@@ -42,15 +42,9 @@
 
 ;;; Ordering Pitch-class sets
 
-(defgeneric ascending (object)
-  (:documentation "Sorts an object's list into an ascending order"))
-
 (defun ascending (pc-set)
   (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'<))
-
-(defgeneric descending (object)
-  (:documentation "Sorts an object's list into a descending order"))
 
 (defun descending (pc-set)
   (check-type pc-set pc-set)
@@ -117,8 +111,11 @@
     (set-transpose no (- (first no)))))
 
 ;;; Pitch Class Set Symmetry
+
+(defun set-complement (pc-set)
+  (set-difference '(0 1 2 3 4 5 6 7 8 9 10 11) pc-set))
 ;(defun t-related-p (pcs1 pcs2)
- ; "Determines whether two Pitch Class Sets are related transpositionally."
+					; "Determines whether two Pitch Class Sets are related transpositionally."
  ; (check-type pcs1 pc-set)
   ;(check-type pcs2 pc-set)
  ; (equal (set-transpose pcs1 (- (first pcs1)

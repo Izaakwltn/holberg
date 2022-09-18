@@ -106,6 +106,8 @@
 (defun number-name (n)
   (first (second (assoc n name-key))))
 
+(defun name-set (pc-set)
+  (mapcar #'number-name pc-set))
 ;;; Solfege formatting
 
 (defun solfege-p (i)

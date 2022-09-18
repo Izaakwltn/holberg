@@ -35,7 +35,8 @@
 (defmethod inverse ((tone-row tone-row) root)
   "Takes a tone-row and root, returns I-n inverse."
   (make-tone-row 'inverse root (mapcar #'(lambda (matrix-row)
-					   (nth (find-index-value (row tone-row) root))
-					   matrix-row)
-				       (rows (build-matrix tone-row)))))
+					   (nth (find-index-value (row tone-row) root)
+					   matrix-row))
+				       (make-matrix (row tone-row)))))
+
 
