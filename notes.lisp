@@ -61,7 +61,7 @@
   "Returns whether a note is higher than another"
   (cond ((> (octave note1) (octave note2))
 	 t)
-	((> (note-num note1) (note-num note2))
+	((> (pc note1) (pc note2))
 	 t)
 	(t nil)))
 
@@ -69,7 +69,7 @@
   "Returns whether note 1 is lower than note 2"
   (cond ((< (octave note1) (octave note2))
 	 t)
-	((< (note-num note1) (note-num note2))
+	((< (pc note1) (pc note2))
 	 t)
 	(t nil)))
 

@@ -14,4 +14,5 @@
 	       (:file "pitch-class-sets")
 	       (:file "notes")
 	       (:file "collections")
-	       (:file "scales")))
+	       (:file "scales")
+               (:file "chords")))
