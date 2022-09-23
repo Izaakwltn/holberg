@@ -34,7 +34,7 @@
               (make-instr-chord instrument chord c))
           (chord-tree-pathfinder (all-chord-notes instrument chord))))
 
-;;; Filtering partial chords
+;;; Filtering out partial chords
 
 (defmethod full-voicedp ((instr-chord instr-chord))
   "Checks whether a chord is fully voiced (every chord tone is included)."
@@ -43,6 +43,13 @@
                                                  (holberg::quality (chord instr-chord))))))
 
 (defmethod full-chords ((instrument instrument) chord)
+  "Returns all chords which are fully-voiced"
   (remove-if-not #'(lambda (c)
                      (full-voicedp c))
                  (possible-chords instrument chord)))
+
+(defmethod pretty-full-chords ((instrument instrument) chord)
+  "Outputs just the fretted chords."
+  (mapcar #'(lambda (c)
+	      (mapcar #'fret (ponl c)))
+	  (full-chords instrument chord)))
