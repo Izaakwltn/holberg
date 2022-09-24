@@ -4,17 +4,19 @@
 
 (in-package :holberg)
 
-;;;
 ;;; Formatting systems:
 ;;;
 ;;; Using letter system
 ;;;
+;;; pitch-names
 
-(defun note-name-p (i)
+(declaim (ftype (function (symbol) (or t null)) pitch-name-p))
+
+(defun pitch-name-p (i)
   (member i '(C C# Db D D# Eb E E# F F# Gb G G# Ab A A# Bb B B#)))
 	      
-(deftype note-name ()
-  `(satisfies note-name-p))
+(deftype pitch-name ()
+  `(satisfies pitch-name-p))
 
 (defvar name-key '((0 (C B# Db))
 		   (1 (C# Db))
@@ -29,15 +31,29 @@
 		   (10 (A# Bb))
 		   (11 (B Cb))))
 
+(declaim (ftype (function (symbol) pitch-class) name-number))
+
 (defun name-number (name)
+  "Returns the pitch-class for a given pitch-name"
   (first (find-if #'(lambda (i)
 	       (member name (second i)))
 		  name-key)))
 
+(declaim (ftype (function (pitch-class) symbol) number-name))
+
 (defun number-name (n)
+  "Returns a pitch-name for a given pitch-class, may be enharmonically awkward."
   (first (second (assoc n name-key))))
 
+(declaim (ftype (function (pc-set) list) name-set))
+
+(defun name-set (pc-set)
+  "Returns a pc-set converted to standard pitch names."
+  (mapcar #'number-name pc-set))
+
+;;;
 ;;; Solfege formatting
+;;;
 
 (defun solfege-p (i)
   (member i '('do re mi fa so la ti do)))

@@ -6,6 +6,7 @@
 
 ;;; Pitch Class Type and basic operations
 
+(declaim (ftype (function (integer) (or t null)) pitch-class-p))
 (defun pitch-class-p (n)
   "Determines whether an integer is a qualifying pitch class"
   (check-type n integer)
@@ -15,16 +16,19 @@
 (deftype pitch-class ()
   `(satisfies pitch-class-p))
 
+(declaim (ftype (function (pitch-class) pitch-class) pc-incr))
 (defun pc-incr (pc)
   "Increments a pitch class"
   (check-type pc pitch-class)
   (mod (1+ pc) 12))
 
+(declaim (ftype (function (pitch-class) pitch-class) pc-decr))
 (defun pc-decr (pc)
   "Decrements a pitch class"
   (check-type pc pitch-class)
   (mod (1- pc) 12))
 
+(declaim (ftype (function (pitch-class integer) pitch-class) pc-transpose))
 (defun pc-transpose (pc interval)
   "Transposes a pitch class up or down by a given signed integer"
   (check-type pc pitch-class)
@@ -37,11 +41,13 @@
 
 ;;; Finding intervals between pitch classes
 
+(declaim (ftype (function (pitch-class pitch-class integer) integer) pc-interval-backend))
 (defun pc-interval-backend (pclow pchigh interval)
   "Backend for pc-interval"
   (cond ((equal pclow pchigh) interval)
 	(t (pc-interval-backend (pc-incr pclow) pchigh (1+ interval)))))
 
+(declaim (ftype (function (pitch-class pitch-class) integer) pc-interval))
 (defun pc-interval (pclow pchigh)
   "Finds the interval in between two pitch-classes"
   (check-type pclow pitch-class)

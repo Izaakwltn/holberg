@@ -5,8 +5,9 @@
 (in-package :holberg)
 
 
-;;; ------------------------------------------------------------------------
 ;;; Pitch Class Sets
+
+(declaim (ftype (function (list) (or t null)) pc-set-p))
 
 (defun pc-set-p (ls)
   "Determines whether the list constitutes a pitch class set."
@@ -21,6 +22,8 @@
   "A pitch-class set"
   `(satisfies pc-set-p))
 
+;;; classifying pitch-class sets by length
+
 (defvar *n-element-sets* '((1 isochord)
 			   (2 dyad)
 			   (3 trichord)
@@ -34,6 +37,8 @@
 			   (11 undecachord)
 			   (12 dodecachord)))
 
+(declaim (ftype (function (pc-set) symbol) n-element-name))
+
 (defun n-element-name (pc-set)
   "Returns the designated name for the length of pitch-class set"
   (check-type pc-set pc-set)
@@ -42,13 +47,21 @@
 
 ;;; Ordering Pitch-class sets
 
+(declaim (ftype (function (pc-set) pc-set) ascending))
+
 (defun ascending (pc-set)
   (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'<))
 
+(declaim (ftype (function (pc-set) pc-set) descending))
+
 (defun descending (pc-set)
   (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'>))
+
+;;; Set transposition
+
+(declaim (ftype (function (pc-set integer) pc-set) set-transpose))
 
 (defun set-transpose (pc-set interval)
   "Transposes a pitch class set by a given interval"
@@ -60,18 +73,23 @@
 
 ;;; Pitch Class Set Permutation
 
-(defun permutate (pc-set)
+(declaim (ftype (function (pc-set) pc-set) set-permutate))
+(defun set-permutate (pc-set)
   "Shifts a pitch class set over by one"
   (check-type pc-set pc-set)
   (append (cdr pc-set) (list (car pc-set))))
 
-;;; finding Normal Order/normal form
+;;; finding Normal Order and Normal Form
+
+(declaim (ftype (function (pc-set) integer) first-last-interval))
 
 (defun first-last-interval (pc-set)
   "Finds the interval between the first PC and last PC in a PC set"
   (check-type pc-set pc-set)
   (pc-interval (first pc-set)
 	       (car (last pc-set))))
+
+(declaim (ftype (function (pc-set pc-set) (or t nil)) more-normal-p))
 
 (defun more-normal-p (pcs-1 pcs-2)
   "Finds the more normalized of two pc-sets"
@@ -92,6 +110,8 @@
 			(remove (car (last pcs-2))
 				pcs-2)))))
 
+(declaim (ftype (function (pc-set) pc-set) normal-order))
+
 (defun normal-order (pc-set)
   "Returns the normal order for a pc-set (organized by smallest intervals)"
   (check-type pc-set pc-set)
@@ -104,6 +124,8 @@
 	:do (setq permutated (permutate permutated))
 	:finally (return normalest)))
 
+(declaim (ftype (function (pc-set) pc-set) normal-form))
+
 (defun normal-form (pc-set)
   "Returns the normal form for a given pitch-class set"
   (check-type pc-set pc-set)
@@ -112,9 +134,13 @@
 
 ;;; Pitch Class Set Symmetry
 
+(declaim (ftype (function (pc-set) pc-set) set-compliment))
+
 (defun set-complement (pc-set)
+  "Finds the set's complement (the set containing all pcs not in the original set"
   (set-difference '(0 1 2 3 4 5 6 7 8 9 10 11) pc-set))
-;(defun t-related-p (pcs1 pcs2)
+
+                                        ;(defun t-related-p (pcs1 pcs2)
 					; "Determines whether two Pitch Class Sets are related transpositionally."
  ; (check-type pcs1 pc-set)
   ;(check-type pcs2 pc-set)
@@ -132,7 +158,7 @@
 	:finally (return count)))
 
 
-;;; Pitch Class Pitch definition
+;;; Pitch Class Pitch definition, mainly for easy reading
 
 (defclass pitch-class-set ()
   ((pc-set      :initarg :pc-set
@@ -150,7 +176,10 @@
 	obj
       (format stream "~a {~{ ~a~}}, Normal Form: {~{ ~a~}}" n-elem-name pc-set normalized)))) ; (find-quality pc-set)))))
 
+(declaim (ftype (function (pc-set) pitch-class-set) make-pitch-class-set))
+
 (defun make-pitch-class-set (pc-set)
+  "Makes a pitch-class-set class object"
   (check-type pc-set pc-set)
   (make-instance 'pitch-class-set :pc-set pc-set
 		                  :n-elem-name (n-element-name pc-set)

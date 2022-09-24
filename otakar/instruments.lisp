@@ -25,27 +25,29 @@
                      (high    high))
         obj
       (format stream "~a~%Strings: ~a~%Reach: ~a frets/steps~%Range: ~a-~a" name strings reach low high))))
-   
-(defun make-instrument (instrument-name string-notes reach-steps low-note high-note)
+
+(declaim (ftype (function (string list integer integer integer) instrument) make-instrument))
+
+(defun make-instrument (instrument-name string-pitches reach-steps low-note high-note)
   (make-instance 'instrument
                  :name instrument-name
-                 :strings string-notes
+                 :strings string-pitches
                  :reach   reach-steps
                  :low     low-note
                  :high    high-note))
 
-(defun lower-bound(string-notes)
+(defun lower-bound(string-pitches)
   "Finds the lowest note on the instrument."
-  (first (sort (copy-list string-notes) #'holberg::lower-note-p)))
+  (first (sort (copy-list string-pitches) #'holberg::lower-pitch-p)))
 
-(defun upper-bound (string-notes)
+(defun upper-bound (string-pitches)
   "Finds the probable highest note on the instrument."
-  (holberg::transpose (first (sort (copy-list string-notes) #'holberg::higher-note-p))
+  (pitch-transpose (first (sort (copy-list string-notes) #'higher-pitch-p))
                       36))
 
-(defun quick-instrument (instrument-name string-notes reach-steps)
+(defun quick-instrument (instrument-name string-pitches reach-steps)
   (make-instrument instrument-name
-                   string-notes
+                   string-pitches
                    reach-steps
                    (lower-bound string-notes)
                    (upper-bound string-notes)))
@@ -60,7 +62,7 @@
 
 (defun find-fret (string-pc pc)
   "Finds the lowest possible fret number for a pitch class on a string"
-  (holberg::pc-interval string-pc pc))
+  (pc-interval string-pc pc))
 
 ;;; Pitch class on string, for carrying fret data
 
@@ -89,7 +91,7 @@
 ;;; Strings
 
 (defun string-note (pc octave)
-  (holberg::make-note pc octave))
+  (make-pitch pc octave))
 
 (defmethod string-pcs ((instrument instrument))
   (mapcar #'holberg::pc (strings instrument)))

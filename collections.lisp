@@ -6,38 +6,49 @@
 
 ;;; Defining collections of notes
 
+(declaim (ftype (function (list) (or t null)) collection-p))
+
 (defun collection-p (ls)
-  "Checks whether a list is a collection of notes."
+  "Checks whether a list is a collection of pitches."
   (cond ((null ls) t)
-	((not (typep (first ls) 'note))
+	((not (typep (first ls) 'pitch))
 	 nil)
 	(t (collection-p (rest ls)))))
 
 (deftype collection ()
   `(satisfies collection-p))
 
+;;; sorting collections
+
+(declaim (ftype (function (collection) collection) ascending-collection))
+
 (defun ascending-collection (collection)
-  (sort (copy-list collection) #'lower-note-p))
+  "Returns a pitch collection in ascending order"
+  (sort (copy-list collection) #'lower-pitch-p))
+
+(declaim (ftype (function (collection) collection) descending-collection))
 
 (defun descending-collection (collection)
-  (sort (copy-list collection) #'higher-note-p))
+  "Returns a pitch collection in descending order"
+  (sort (copy-list collection) #'higher-pitch-p))
+
 ;;; Converting note collections to pitch class sets
 
-(defun remove-pc-duplicates (pc-list)
+(declaim (ftype (function (collection) pc-set) make-pc-set))
+
+(defun make-pc-set (collection)
   "Removes pitch class duplicates while maintaining order"
   (loop :with pcs := nil
 
-	:for pc :in pc-list
+	:for pc :in (mapcar #'pc collection)
 	:do (if (member pc pcs)
 		nil
 		(setq pcs (append pcs (list pc))))
 	:finally (return pcs)))
 
-(defun make-pc-set (collection)
-  "Makes a pitch class set list"
-  (remove-pc-duplicates (mapcar #'pc collection)))
+(declaim (ftype (function (collection) pitch-class-set) collect-set))
 
 (defun collect-set (collection)
-  "Makes a Pitch Class Set object from a collection"
+  "Makes a Pitch Class Set class object from a collection"
   (make-pitch-class-set (make-pc-set collection)))
 

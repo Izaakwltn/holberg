@@ -4,9 +4,11 @@
 
 (in-package :holberg)
 
+;;; scale class
+
 (defclass scale ()
-  ((root-note :initarg :root-note
-	      :accessor root-note)
+  ((tonic     :initarg :tonic ; maybe should be root, tonic is too abstract
+	      :accessor tonic)
    (quality   :initarg :quality
 	      :accessor quality)
    (octlength :initarg :octlength
@@ -15,47 +17,58 @@
 
 (defmethod print-object ((obj scale) stream)
       (print-unreadable-object (obj stream :type t)
-        (with-accessors ((root-note root-note)
+        (with-accessors ((tonic tonic)
 			 (quality quality)
 			 (octlength octlength))
             obj
           (format stream "A ~a-~a, ~a octave scale: ~{~a~%~}"
-		  root-note
+		  tonic
 		  quality
 		  octlength
 		  (scale-notes obj)))))
 
-(defvar mode-list '((major          (0 2 4 5 7 9 11))
-		    (ionian         (0 2 4 5 7 9 11))
-		    (dorian         (0 2 3 5 7 9 10))
-		    (phrygian       (0 1 3 5 7 8 10))
-		    (lydian         (0 2 4 6 7 9 11))
-		    (mixolydian     (0 2 4 5 7 9 10))
-		    (aeolian        (0 2 3 5 7 8 10))
-		    (natural-minor  (0 2 3 5 7 8 10))
-		    (melodic-minor  (0 2 3 5 7 8 9 10 11))
-		    (harmonic-minor (0 2 3 5 7 8 11))
-		    (locrian        (0 1 3 5 6 8 10))
-		    (chromatic      (0 1 2 3 4 5 6 7 8 9 10 11))))
+(defvar mode-list '(("major"          (0 2 4 5 7 9 11))
+		    ("ionian"         (0 2 4 5 7 9 11))
+		    ("dorian"         (0 2 3 5 7 9 10))
+		    ("phrygian"       (0 1 3 5 7 8 10))
+		    ("lydian"         (0 2 4 6 7 9 11))
+		    ("mixolydian"     (0 2 4 5 7 9 10))
+		    ("aeolian"        (0 2 3 5 7 8 10))
+		    ("natural-minor"  (0 2 3 5 7 8 10))
+		    ("melodic-minor"  (0 2 3 5 7 8 9 10 11))
+		    ("harmonic-minor" (0 2 3 5 7 8 11))
+		    ("locrian"        (0 1 3 5 6 8 10))
+		    ("chromatic"      (0 1 2 3 4 5 6 7 8 9 10 11))))
 
-(defmethod make-scale ((note note) quality octlength)
+(declaim (ftype (function (pitch string integer) scale) make-scale))
+
+(defun make-scale (tonic quality octlength)
+  "Makes a scale from the given tonic pitch, quality, and number of octaves"
   (make-instance 'scale :root-note note
 		        :quality quality
 			:octlength octlength))
 
-(defun octave-pcs (root-pc quality)
+;;; generating the notes for the scale
+
+(declaim (ftype (function (pitch string) pc-set) octave-pcs))
+
+(defun octave-pcs (tonic quality)
   "Returns the pitch classes of each note for one octave of the scale"
-  (set-transpose (second (assoc quality mode-list)) root-pc))
+  (set-transpose (second (assoc quality mode-list)) (pc tonic)))
+
+(declaim (ftype (function (pitch-class pitch-class) (or t null)) passing-zero))
 
 (defun passing-zero (pc1 pc2)
   "Checks whether moving from one pitch class to another should trigger the next octave"
   (< pc1 pc2))
-	 
-(defmethod scale-notes ((scale scale))
+
+(declaim (ftype (function (scale) collection) scale-pitches))
+
+(defun scale-pitches (scale)
   "Returns notes for a given scale."
-  (loop :with tonic          := (pc (root-note scale))
+  (loop :with tonic          := (pc (tonic scale))
 	:with quality        := (quality scale)
-	:with current-octave := (octave (root-note scale))
+	:with current-octave := (octave (tonic scale))
 	:with previous-pc    := 0
 	:with notes          := nil
 	
@@ -68,31 +81,54 @@
 		                :collect (make-note j current-octave) :into jnotes
 				:do (setq previous-pc j)
 				    :finally (return jnotes))))
-	    :finally (return (append notes (list (transpose (first notes) (* 12 (octlength scale))))))))
+        :finally (return (append notes
+                                 (list (transpose (first notes) (* 12 (octlength scale))))))))
 
-(defmethod transpose ((scale scale) interval)
+
+;;; transposing and transforming scales
+
+(declaim (ftype (function (scale integer) scale) scale-transpose))
+
+(defun scale-transpose (scale interval)
   "Transposes a scale by a given interval"
-  (make-scale (transpose (root-note scale) interval)
+  (make-scale (transpose (tonic scale) interval)
 	      (quality scale)
 	      (octlength scale)))
 
-(defmethod relative ((scale scale))
+(declaim (ftype (function (scale) scale) relative))
+
+(defun relative (scale)
   "Returns the relative major or minor for a given scale."
-  (make-scale (if (equal (quality scale) 'major)
-		   (transpose (root-note scale) -3)
-		   (transpose (root-note scale) 3))
-	       (if (equal (quality scale) 'major)
-		   'natural-minor
-		   'major)
+  (let ((q (quality scale))
+        (tonic (tonic scale)))
+    (make-scale (if (equal q "major")
+		   (pitch-transpose tonic -3)
+		   (pitch-transpose tonic 3))
+	       (if (equal q "major")
+		   "natural-minor"
+		   "major")
+	       (octlength scale))))
+
+(declaim (ftype (function (scale) scale) parallel))
+
+(defun parallel (scale)
+  "Returns the parallel major or minor for a given scale."
+  (make-scale (tonic scale)
+	       (if (equal (quality scale) "major")
+		   "natural-minor"
+		   "major")
 	       (octlength scale)))
 
-(defmethod parallel ((scale scale))
-  "Returns the parallel major or minor for a given scale."
-  (make-scale (root-note scale)
-	       (if (equal (quality scale) 'major)
-		   'natural-minor
-		   'major)
-	       (octlength scale)))
+
+
+
+
+;;;;
+;;;;
+;;;
+;;;
+;;;
+;;;
 
 ;;; finding quality of a collection through pitch class set theory
 
