@@ -38,18 +38,25 @@
 
 (defmethod full-voicedp ((instr-chord instr-chord))
   "Checks whether a chord is fully voiced (every chord tone is included)."
-  (equal (holberg::ascending (holberg::remove-pc-duplicates (mapcar #'pc (ponl instr-chord))))
+  (equal (holberg::ascending (make-pc-set
+                              (mapcar #'(lambda (n)
+                                          (note-pitch n))
+                                      (posl instr-chord))))
          (holberg::ascending (holberg::chord-pcs (holberg::root (chord instr-chord))
                                                  (holberg::quality (chord instr-chord))))))
 
-(defmethod full-chords ((instrument instrument) chord)
+(declaim (ftype (function (instrument holberg::chord) list) full-chords))
+  
+(defun full-chords (instrument chord)
   "Returns all chords which are fully-voiced"
   (remove-if-not #'(lambda (c)
                      (full-voicedp c))
                  (possible-chords instrument chord)))
 
-(defmethod pretty-full-chords ((instrument instrument) chord)
+(declaim (ftype (function (instrument holberg::chord) list) fretted-full-chords))
+
+(defun fretted-full-chords ((instrument instrument chord)
   "Outputs just the fretted chords."
   (mapcar #'(lambda (c)
-	      (mapcar #'fret (ponl c)))
+	      (mapcar #'fret (posl c)))
 	  (full-chords instrument chord)))

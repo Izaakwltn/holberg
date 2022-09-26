@@ -4,15 +4,6 @@
 
 (in-package :otakar)
 
-;(defun string-list-p (ls)
- ; (loop :for i :in ls
-;	:if (not (typep i 'pitch))
-;	  :return nil
-;	:finally (return t)))
-
-;(deftype string-list ()
- ; `(satisfies string-list-p))
-
 (defclass instrument ()
   ((name    :initarg :name
             :accessor name)
@@ -33,9 +24,11 @@
                      (low     low)
                      (high    high))
         obj
-      (format stream "~a~%Strings: ~a~%Reach: ~a frets/steps~%Range: ~a-~a" name strings reach low high))))
+      (format stream
+              "~a~%Strings: ~a~%Reach: ~a frets/steps~%Range: ~a-~a"
+              name strings reach low high))))
 
-(declaim (ftype (function (string collection integer pitch pitch) instrument) make-instrument)) ;maybe use pitch-collection instead of a separate string type
+(declaim (ftype (function (string collection integer pitch pitch) instrument) make-instrument))
 
 (defun make-instrument (instrument-name string-pitches reach-steps low-note high-note)
   (make-instance 'instrument
@@ -44,6 +37,8 @@
                  :reach   reach-steps
                  :low     low-note
                  :high    high-note))
+
+;;; setting default upper and lower bounds for an instrument
 
 (declaim (ftype (function (collection) pitch) lower-bound))  
 
@@ -60,9 +55,11 @@
                       36))
 
 
+;;; Quickly add an instrument without upperbound or lowerbound
 (declaim (ftype (function (string collection integer) instrument) quick-instrument))
 
 (defun quick-instrument (instrument-name string-pitches reach-steps)
+  "Quick add instrument without supplying outerbounds."
   (make-instrument instrument-name
                    string-pitches
                    reach-steps
@@ -71,58 +68,60 @@
 
 ;;; Instrument reach and frets
 
-(declaim (ftype (function (pitch-class integer) list) quick-instrument))
+(declaim (ftype (function (pitch integer) collection) reachable-notes))
 
-(defun reachable-notes (string-pc reach-steps)
-  "Determines the Reach in half-steps on a given string"
+(defun reachable-notes (string-pitch reach-steps)
+  "Determines the reachable notes on a given string"
   (if (zerop reach-steps)
-      (list string-pc)
-      (cons string-pc (reachable-notes (pc-incr string-pc) (1- reach-steps)))))
+      (list string-pitch)
+      (cons string-pitch (reachable-notes (pitch-incr string-pitch) (1- reach-steps)))))
 
-(declaim (ftype (function (pitch-class pitch-class) integer) find-fret))
+(declaim (ftype (function (pitch pitch) integer) find-fret))
 
-(defun find-fret (string-pc pc)
+(defun find-fret (string-pitch note-pitch)
   "Finds the lowest possible fret number for a pitch class on a string"
-  (pc-interval string-pc pc))
+  (pitch-interval string-pitch note-pitch))
 
 ;;; Pitch class on string, for carrying fret data
 
 (defclass pitch-on-string ()
-  ((instrument :initarg :instrument
-               :accessor instrument)
-   (string-pc  :initarg :string-pc
-               :accessor string-pc)
-   (pc         :initarg :pc
-       :accessor pc)
-   (fret :initarg :fret
-         :accessor fret)))
+  ((string-pitch  :initarg :string-pitch
+                  :accessor string-pitch)
+   (note-pitch    :initarg :note-pitch
+                  :accessor note-pitch)
+   (fret          :initarg :fret
+                  :accessor fret)))
 
-(defmethod print-object ((obj pc-on-string) stream)
+(defmethod print-object ((obj pitch-on-string) stream)
   (print-unreadable-object (obj stream :type t)
-    (with-accessors ((string-pc string-pc)
-                     (instrument instrument)
-                     (pc pc)
+    (with-accessors ((string-pitch string-pitch)
+                     (note-pitch note-pitch)
                      (fret fret))
         obj
-      (format stream "~a - String ~a, Fret ~a, Pitch Class: ~a" (name instrument) string-pc fret pc))))
+      (format stream "String ~a, Fret ~a, Pitch: ~a" string-pitch fret note-pitch))))
 
-(defun make-pc-on-string (instrument string-pc pc fret)
-  (make-instance 'pc-on-string :instrument instrument :string-pc string-pc :pc pc :fret fret))
+(declaim (ftype (function (pitch pitch) pitch-on-string) make-pitch-on-string))
+
+(defun make-pitch-on-string (string-pitch note-pitch)
+  (make-instance 'pitch-on-string :string-pitch string-pitch
+                                  :note-pitch note-pitch
+                                  :fret (find-fret string-pitch note-pitch)))
 
 ;;; Strings
-
-(defun string-note (pc octave)
-  (make-pitch pc octave))
-
 (defmethod string-pcs ((instrument instrument))
   (mapcar #'holberg::pc (strings instrument)))
 
 ;;; Predefined standard instruments:
 
-(defvar *violin-strings* (list (string-note 7 3) (string-note 2 4) (string-note 9 4) (string-note 4 5)))
+(defvar *violin-strings* (list (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4) (make-pitch 4 5)))
 
 (defvar *violin* (quick-instrument "violin" *violin-strings* 7))
 
-(defvar *ukulele-strings* (list (string-note 7 4) (string-note 0 4) (string-note 4 4) (string-note 9 4)))
+(defvar *ukulele-strings* (list (make-pitch 7 4) (make-pitch 0 4) (make-pitch 4 4) (make-pitch 9 4)))
 
 (defvar *ukulele* (quick-instrument "ukulele" *ukulele-strings* 7))
+
+(defvar *guitar-strings*
+  (list (make-pitch 4 2) (make-pitch 9 2) (make-pitch 2 3) (make-pitch 7 3) (make-pitch 11 3) (make-pitch 4 4)))
+
+(defvar *guitar* (quick-instrument "guitar" *guitar-strings* 4))

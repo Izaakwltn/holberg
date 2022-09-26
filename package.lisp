@@ -30,9 +30,12 @@
            #:make-pitch
            #:pitch-incr
            #:pitch-decr
+           #:pitch-interval
            #:pitch-transpose
            #:higher-pitch-p
            #:lower-pitch-p
+           #:higher-pitch
+           #:lower-pitch
            #:name-number
            #:number-name
            #:name-set)
@@ -57,5 +60,11 @@
            #:scale-transpose
            #:relative
            #:parallel)
-  
-  )
+
+  ;;;chords.lisp
+  (:export #:*chord-qualities*
+           #:quality-pc-set
+           #:chord-pcs
+           #:chord
+           #:make-chord
+           #:arpeggio))

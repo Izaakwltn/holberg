@@ -5,13 +5,13 @@
 (in-package :holberg)
 
 (defvar *chord-qualities* '(("minor"     (0 3 7))
-                                 ("major"     (0 4 7))
-                                 ("dim"       (0 3 6))
-                                 ("aug"       (0 4 8))
-                                 ("min7"      (0 3 7 10))
-                                 ("maj7"      (0 4 7 10))
-                                 ("half-dim7" (0 3 6 10))
-                                 ("dim7"      (0 3 6 9))))
+                            ("major"     (0 4 7))
+                            ("dim"       (0 3 6))
+                            ("aug"       (0 4 8))
+                            ("min7"      (0 3 7 10))
+                            ("maj7"      (0 4 7 10))
+                            ("half-dim7" (0 3 6 10))
+                            ("dim7"      (0 3 6 9))))
 
 (declaim (ftype (function (string) pc-set) quality-pc-set))
 
@@ -19,7 +19,7 @@
   "Returns the normal order pc-set for a given quality."
   (second (find-if #'(lambda (q)
                        (string-equal (first q) quality))
-          chord-qualities)))
+          *chord-qualities*)))
 
 (declaim (ftype (function (pitch-class string) pc-set) chord-pcs))
 

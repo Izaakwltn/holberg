@@ -5,34 +5,29 @@
 (in-package :otakar)
 
 (defclass instr-chord ()
-  ((instrument :initarg :instrument
-               :accessor instrument)
-   (chord      :initarg :chord
-               :accessor chord)
-   (pc-on-string-list :initarg :ponl
-                      :accessor ponl)))
+  ((instrument           :initarg :instrument
+                         :accessor instrument)
+   (chord                :initarg :chord
+                         :accessor chord)
+   (pitch-on-string-list :initarg :posl
+                         :accessor posl)))
 
 (defmethod print-object ((obj instr-chord) stream)
   (print-unreadable-object (obj stream :type t)
     (with-accessors ((instrument instrument)
                      (chord chord)
-                     (ponl ponl))
+                     (posl posl))
         obj
-      (format stream "~a: ~a-~a~%~{~a~%~}" (name instrument) (holberg::root chord) (holberg::quality chord) ponl))))
+      (format stream "~a: ~a-~a~%~{~a~%~}" (name instrument) (holberg::root chord) (holberg::quality chord) posl))))
 
-(defun make-instr-chord (instrument chord pc-on-string-list)
+(declaim (ftype (function (instrument holberg::chord list) instr-chord) make-instr-chord))
+
+(defun make-instr-chord (instrument chord pitch-on-string-list)
   (make-instance 'instr-chord :instrument instrument
                               :chord chord
-                              :ponl pc-on-string-list))
-                                        ;(defun reachable-notes (string-pc reach-steps)
- ; "Determines the Reach in half-steps on a given string"
-  ;(if (zerop reach-steps)
-   ;   (list string-pc)
-    ;  (cons string-pc (reachable-notes (holberg::pc-incr string-pc) (1- reach-steps)))))
+                              :posl pitch-on-string-list))
 
-;(defun find-fret (string-pc pc)
- ; "Finds the lowest possible fret number for a pitch class on a string"
-  ;(holberg::pc-interval string-pc pc))
+(declaim (ftype (function (instrument chord) list) all-chord-notes))
 
 (defmethod all-chord-notes ((instrument instrument) chord)
   "Returns all first position chord-notes for each string on an instrument."
@@ -40,9 +35,10 @@
   (let ((pcs (holberg::chord-pcs
               (holberg::root chord)
               (holberg::quality chord))))
-    (loop :for s :in (string-pcs instrument)
+    (loop :for s :in (strings instrument)
           :collect (mapcar #'(lambda (n)
-                               (make-pc-on-string instrument s n (find-fret s n)))
-                               (intersection (reachable-notes s (reach instrument))
-                                             pcs)))))
-          
+                               (make-pitch-on-string s n))
+                           (remove-if-not #'(lambda (r)
+                                              (member (holberg::pc r) pcs))
+                                          (reachable-notes s (reach instrument)))))))
+                                          

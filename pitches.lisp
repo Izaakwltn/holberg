@@ -43,6 +43,50 @@
   (make-instance 'pitch :pc pc
 		        :octave   octave))
 
+;;; checking for pitch equality
+
+(defun pitch-equal (pitch1 pitch2)
+  "Checks whether two pitches are equal"
+  (and (equal (pc pitch1) (pc pitch2))
+       (equal (octave pitch1) (octave pitch2))))
+
+(declaim (ftype (function (pitch pitch) (or t nil)) higher-pitch-p))
+
+;;; Predicates for sorting pitches
+
+(defun higher-pitch-p (pitch1 pitch2)
+  "Returns whether a note is higher than another"
+  (cond ((> (octave pitch1) (octave pitch2))
+	 t)
+	((> (pc pitch1) (pc pitch2))
+	 t)
+	(t nil)))
+
+(declaim (ftype (function (pitch pitch) pitch) higher-pitch))
+(defun higher-pitch (pitch1 pitch2)
+  "Returns the higher of two pitches"
+  (if (higher-pitch-p pitch1 pitch2)
+      pitch1
+      pitch2))
+
+(declaim (ftype (function (pitch pitch) (or t nil)) lower-pitch-p))
+
+(defun lower-pitch-p (pitch1 pitch2)
+  "Returns whether note 1 is lower than note 2"
+  (cond ((< (octave pitch1) (octave pitch2))
+	 t)
+	((< (pc pitch1) (pc pitch2))
+	 t)
+	(t nil)))
+
+(declaim (ftype (function (pitch pitch) pitch) lower-pitch))
+
+(defun lower-pitch (pitch1 pitch2)
+  "Returns the higher of two pitches"
+  (if (lower-pitch-p pitch1 pitch2)
+      pitch1
+      pitch2))
+
 ;;; pitch increments and decrements
 
 (declaim (ftype (function (pitch) pitch) pitch-incr))
@@ -63,6 +107,20 @@
       (make-pitch (pc-decr (pc pitch)) (1- (octave pitch)))
       (make-pitch (pc-decr (pc pitch)) (octave pitch))))
 
+;;; finding an interval between two pitches
+
+(declaim (ftype (function (pitch pitch integer) integer) pitch-interval-backend))
+
+(defun pitch-interval-backend (pitch-low pitch-high interval)
+  (cond ((pitch-equal pitch-low pitch-high) interval)
+        (t (pitch-interval-backend (pitch-incr pitch-low) pitch-high (1+ interval)))))
+
+(declaim (ftype (function (pitch pitch) integer) pitch-interval))
+
+(defun pitch-interval (pitch1 pitch2)
+  "Returns the interval between two pitches in halfsteps"
+  (pitch-interval-backend (lower-pitch pitch1 pitch2) (higher-pitch pitch1 pitch2) 0))
+
 ;;; pitch transposition
 
 (declaim (ftype (function (pitch integer) pitch) pitch-transpose))
@@ -76,28 +134,6 @@
 	 (pitch-transpose (pitch-incr pitch) (1- interval)))
 	((< interval 0)
 	 (pitch-transpose (pitch-decr pitch) (1+ interval)))))
-
-;;; Predicates for sorting pitches
-
-(declaim (ftype (function (pitch pitch) (or t nil)) higher-pitch-p))
-
-(defun higher-pitch-p (pitch1 pitch2)
-  "Returns whether a note is higher than another"
-  (cond ((> (octave pitch1) (octave pitch2))
-	 t)
-	((> (pc pitch1) (pc pitch2))
-	 t)
-	(t nil)))
-
-(declaim (ftype (function (pitch pitch) (or t nil)) lower-pitch-p))
-
-(defun lower-pitch-p (pitch1 pitch2)
-  "Returns whether note 1 is lower than note 2"
-  (cond ((< (octave pitch1) (octave pitch2))
-	 t)
-	((< (pc pitch1) (pc pitch2))
-	 t)
-	(t nil)))
 
 
 ;;; A few preset pitches
