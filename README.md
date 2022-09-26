@@ -12,3 +12,19 @@ collection: a collection of pitches (allows for repetition)
 
 
 Holberg currently features two specialized libraries: Seria, for serial 12-tone theory, and Otakar, a library with tools for stringed instruments.
+
+### To try out the Otakar Chord Generator:
+
+(ql:quickload :otakar) or (asdf:load-system :otakar)
+
+(in-package :otakar)
+
+(fretted-full-chords \*ukulele* (make-chord 2 "half-dim7")) ; D Half Diminished-7th
+
+#### Use a preset instrument:
+\*violin* \*ukulele* \*guitar* 
+
+#### Or add a new instrument:
+(list (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4) (make-pitch 4 5)))
+
+(defvar \*instrument* (quick-instrument "instrument-name" (list (make-pitch pitch-class octave) (make-pitch pitch-class octave) ...) reach-in-half-steps))
