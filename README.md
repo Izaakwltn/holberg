@@ -3,11 +3,11 @@
 
 Holberg itself is an atomic music theory library, built using Pitch Class Set Theory.
 
-There are several built-in basic types:
-pitch-class: an integer between 0 and 11 denoting a "note-name"
-pc-set: a set of pitch-classes
-pitch: a pitch-class, octave pair
-collection: a collection of pitches (allows for repetition)
+There are several built-in basic types:\
+pitch-class: an integer between 0 and 11 denoting a "note-name"\
+pc-set: a set of pitch-classes\
+pitch: a pitch-class, octave pair\
+collection: a collection of pitches (allows for repetition)\
 (soon to be added- note: a pitch and duration pair, freq: a frequency)
 
 
@@ -28,6 +28,4 @@ Current chord qualities: ("minor" "major" "dim" "aug" "min7" "maj7" "half-dim7" 
 \*violin* \*ukulele* \*guitar* 
 
 #### Or add a new instrument:
-(list (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4) (make-pitch 4 5)))
-
 (defvar \*instrument* (quick-instrument "instrument-name" (list (make-pitch pitch-class octave) (make-pitch pitch-class octave) ...) reach-in-half-steps))
