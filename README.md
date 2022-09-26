@@ -20,6 +20,9 @@ Holberg currently features two specialized libraries: Seria, for serial 12-tone 
 (in-package :otakar)
 
 (fretted-full-chords \*ukulele* (make-chord 2 "half-dim7")) ; D Half Diminished-7th
+(fretted-full-chords \*violin* (make-chord 9 "major")) ; A Major
+
+Current chord qualities: ("minor" "major" "dim" "aug" "min7" "maj7" "half-dim7" "dim7")
 
 #### Use a preset instrument:
 \*violin* \*ukulele* \*guitar* 
