@@ -55,8 +55,8 @@
 
 (declaim (ftype (function (instrument holberg::chord) list) fretted-full-chords))
 
-(defun fretted-full-chords ((instrument instrument chord)
+(defun fretted-full-chords (instrument chord)
   "Outputs just the fretted chords."
-  (mapcar #'(lambda (c)
-	      (mapcar #'fret (posl c)))
-	  (full-chords instrument chord)))
+  (reverse (mapcar #'(lambda (c)
+                       (mapcar #'fret (posl c)))
+                   (full-chords instrument chord))))

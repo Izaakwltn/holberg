@@ -58,7 +58,8 @@
   "Returns whether a note is higher than another"
   (cond ((> (octave pitch1) (octave pitch2))
 	 t)
-	((> (pc pitch1) (pc pitch2))
+	((and (> (pc pitch1) (pc pitch2))
+              (equal (octave pitch1) (octave pitch2)))
 	 t)
 	(t nil)))
 
@@ -74,8 +75,9 @@
 (defun lower-pitch-p (pitch1 pitch2)
   "Returns whether note 1 is lower than note 2"
   (cond ((< (octave pitch1) (octave pitch2))
-	 t)
-	((< (pc pitch1) (pc pitch2))
+         t)
+	((and (< (pc pitch1) (pc pitch2))
+              (equal (octave pitch1) (octave pitch2)))
 	 t)
 	(t nil)))
 
