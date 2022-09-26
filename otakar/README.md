@@ -1,7 +1,8 @@
 # Otakar
 ## A Library for Composition and Analysis on Stringed Instruments
 
-quickload or asdf:load-stystem
+quickload or asdf:load-stystem :otakar\
+
 Preset instruments:
 \*violin*
 \*ukulele*
