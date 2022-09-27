@@ -31,19 +31,23 @@
   ((root  :initarg :root
           :accessor root)
    (quality :initarg :quality
-            :accessor quality)))
+            :accessor quality)
+   (pc-set  :initarg :pc-set
+            :accessor pc-set)))
 
 (defmethod print-object ((obj chord) stream)
   (print-unreadable-object (obj stream :type t)
     (with-accessors ((root root)
-                     (quality quality))
+                     (quality quality)
+                     (pc-set pc-set))
         obj
-      (format stream "~a-~a, ~a" root quality (chord-pcs root quality)))))
+      (format stream "~a-~a, ~a" root quality pc-set))))
         
 (defun make-chord (root quality)
   (check-type root pitch-class)
   (make-instance 'chord :root root
-                        :quality quality))
+                        :quality quality
+                        :pc-set (chord-pcs root quality)))
 
 ;;; Add arpeggios next..... make the same structure for key/scale
 

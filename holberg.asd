@@ -15,5 +15,6 @@
                (:file "print-systems")
 	       (:file "pitches")
 	       (:file "collections")
+               (:file "keys"
 	       (:file "scales")
                (:file "chords")))
