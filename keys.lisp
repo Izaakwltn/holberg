@@ -87,3 +87,8 @@
             (if (string-equal (quality key) "major")
                 "natural-minor"
                 "major")))
+
+;;;make-chord 
+;(defmethod triads ((key key))
+  
+  

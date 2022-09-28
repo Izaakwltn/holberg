@@ -121,7 +121,7 @@
 	:for i :from 1 :to (length permutated)
 	:if (more-normal-p permutated normalest)
 	  :do (setq normalest permutated)
-	:do (setq permutated (permutate permutated))
+	:do (setq permutated (set-permutate permutated))
 	:finally (return normalest)))
 
 (declaim (ftype (function (pc-set) pc-set) normal-form))

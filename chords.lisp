@@ -21,6 +21,9 @@
                        (string-equal (first q) quality))
           *chord-qualities*)))
 
+;(defun root-position 
+;(defun find-quality (pc-set)
+;  (
 (declaim (ftype (function (pitch-class string) pc-set) chord-pcs))
 
 (defun chord-pcs (pc-root quality)
