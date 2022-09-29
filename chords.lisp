@@ -21,6 +21,23 @@
                        (string-equal (first q) quality))
           *chord-qualities*)))
 
+;;; Finding chord quality of a given pc-set
+
+(declaim (ftype (function (pc-set integer) string) chord-set-quality-backend))
+
+(defun chord-set-quality-backend (pc-set permutations)
+  (let ((q (find-if #'(lambda (n)
+		      (equal (second n) (set-transpose pc-set (- (first pc-set)))))
+			  *chord-qualities*)))
+    (cond (q (first q))
+	  ((zerop permutations) nil)
+	  (t (chord-set-quality-backend (set-permutate pc-set) (1- permutations))))))
+
+(declaim (ftype (function (pc-set) string) chord-set-quality))
+
+(defun chord-set-quality (pc-set)
+  (chord-set-quality-backend (ascending pc-set) (1- (length pc-set))))
+
 ;(defun root-position 
 ;(defun find-quality (pc-set)
 ;  (
@@ -51,6 +68,16 @@
   (make-instance 'chord :root root
                         :quality quality
                         :pc-set (chord-pcs root quality)))
+
+;;;handling inversions------------ actually should just be for instr-chords?
+
+(declaim (ftype (function (pc-set integer) pc-set) invert))
+
+(defun invert (chord-set inversion)
+  (loop :with cs := chord-set
+	:for i :from 1 :to inversion
+	:do (setq cs (set-permutate cs))
+	:finally (return cs)))
 
 ;;; Add arpeggios next..... make the same structure for key/scale
 
