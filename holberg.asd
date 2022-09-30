@@ -17,4 +17,6 @@
 	       (:file "collections")
                (:file "keys")
 	       (:file "scales")
-               (:file "chords")))
+               (:file "chords")
+               (:file "progressions")
+               (:file "chord-symbols")))

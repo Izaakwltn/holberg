@@ -29,7 +29,7 @@
 		   ("bVII"  (10 2 5))
 		   ("vii"   (11 2 6))
 		   ("VII"   (11 3 6))
-		   ("viidim" (11 2 5))))
+		   ("viidim" (11 2 5)))) ;add 7 chords, aug dim for each
 
 (defun roman-p (x)
   (member x (mapcar #'first *romans*) :test #'equal))
@@ -38,16 +38,31 @@
 (deftype roman ()
   `(satisfies roman-p))
 
+(declaim (ftype (function (key roman) chord) roman-chord))
 
 (defun roman-chord (key roman)
   (let ((pcs (set-transpose (second (assoc roman *romans* :test #'equal)) (tonic key))))
     (make-chord (first pcs)
 		(chord-set-quality pcs))))
-;;;make sure to use equal instead of string-equal to make sure it's case sensitive
-  
+
+(declaim (ftype (function (key chord) roman) chord-roman))
+
 (defun chord-roman (key chord)
   (let ((pcs (set-transpose (pc-set chord) (- (tonic key)))))
     (first (find-if #'(lambda (x)
 		 (equal (second x)
 		     pcs))
-	     *romans*))))
+                    *romans*))))
+
+(declaim (ftype (function (key list) progression) roman-chord-list))
+
+(defun roman-chord-list (key roman-list)
+  (mapcar #'(lambda (r)
+              (roman-chord key r))
+          roman-list))
+
+(defun chord-roman-list (key chord-list)
+  (mapcar #'(lambda (c)
+              (chord-roman key c))
+          chord-list))
+  
