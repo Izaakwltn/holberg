@@ -61,7 +61,7 @@
                      (quality quality)
                      (pc-set pc-set))
         obj
-      (format stream "~a-~a, ~a" root quality pc-set))))
+      (format stream "(~a/~a) ~a, ~a" root (number-name root) quality pc-set))))
         
 (defun make-chord (root quality)
   (check-type root pitch-class)

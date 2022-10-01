@@ -46,8 +46,9 @@
 			 (quality quality)
                          (pc-set pc-set))
             obj
-          (format stream "~a-~a, ~a"
+          (format stream "(~a/~a) ~a, ~a"
 		  tonic
+                  (number-name tonic)
 		  quality
                   pc-set))))
 
