@@ -19,4 +19,7 @@
 	       (:file "scales")
                (:file "chords")
                (:file "progressions")
-               (:file "chord-symbols")))
+               (:file "romans")
+               (:file "rhythm")
+               (:file "notes")
+               (:file "measures")))

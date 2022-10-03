@@ -1,10 +1,10 @@
-;;;; chord-symbols.lisp
+;;;; romans.lisp
 ;;;;
 ;;;;
 
 (in-package :holberg)
 
-;;; chord symbol analysis tools within a given key
+;;; roman numeral symbol analysis tools within a given key
 
 (defvar *romans* '(("i"     (0 3 7))
 		   ("I"     (0 4 7))
