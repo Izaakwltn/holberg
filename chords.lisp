@@ -11,7 +11,9 @@
                             ("min7"      (0 3 7 10))
                             ("maj7"      (0 4 7 10))
                             ("half-dim7" (0 3 6 10))
-                            ("dim7"      (0 3 6 9))))
+                            ("dim7"      (0 3 6 9))
+			    ("sus4"      (0 4 5 7))
+			    ("power" (0 7)))) ;;sus4, power chords
 
 (declaim (ftype (function (string) pc-set) quality-pc-set))
 
@@ -38,9 +40,6 @@
 (defun chord-set-quality (pc-set)
   (chord-set-quality-backend (ascending pc-set) (1- (length pc-set))))
 
-;(defun root-position 
-;(defun find-quality (pc-set)
-;  (
 (declaim (ftype (function (pitch-class string) pc-set) chord-pcs))
 
 (defun chord-pcs (pc-root quality)

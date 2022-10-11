@@ -14,6 +14,7 @@
 	       (:file "pitch-class-sets")
                (:file "print-systems")
 	       (:file "pitches")
+	       (:file "freqs")
 	       (:file "collections")
                (:file "keys")
 	       (:file "scales")
