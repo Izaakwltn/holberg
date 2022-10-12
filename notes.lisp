@@ -1,10 +1,11 @@
 ;;;; notes.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (in-package :holberg)
 
 ;;; note class- defined as a pitch and a duration
+
 (defclass note ()
   ((pitch       :initarg :pitch
                 :accessor pitch)
@@ -21,8 +22,10 @@
 (declaim (ftype (function (pitch number) note) make-note))
 
 (defun make-note (pitch duration)
+  (check-type pitch pitch)
   (make-instance 'note :pitch pitch
 		       :duration duration))
+
 ;;; collections of notes
 
 (declaim (ftype (function (list) (or null t)) note-collection-p))
@@ -53,6 +56,7 @@
 (declaim (ftype (function (note-collection) note-chord) make-note-chord))
 
 (defun make-note-chord (note-collection)
+  (check-type note-collection note-collection)
   (make-instance 'note-chord :note-collection note-collection
                  :duration (reduce #'max (mapcar #'duration note-collection))))
 

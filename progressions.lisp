@@ -1,6 +1,6 @@
 ;;;; progessions.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (in-package :holberg)
 
@@ -28,15 +28,19 @@
 
 ;;; maybe add roman numerals
 
-;;; circle of fifths
+;;; circle of fifths --- maybe a separate document at some point
 
-(declaim (ftype (function (pitch-class) pc-set)))
+(declaim (ftype (function (pitch-class) pc-set) pc-circle-of-fifths-up))
 
 (defun pc-circle-of-fifths-up (first-pc)
+  "Cycles up the circle of fifths from a given pitch class"
   (loop :for i :from 0 :to 11
 	:collect (pc-transpose first-pc (* i 7))))
 
+(declaim (ftype (function (pitch-class) pc-set) pc-circle-of-fifths-down))
+
 (defun pc-circle-of-fifths-down (first-pc)
+  "Cycles down the circle of fifths from a given pitch class."
   (loop :for i :from 0 :to 11
 	:collect (pc-transpose first-pc (- (* i 7)))))
 

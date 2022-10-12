@@ -1,6 +1,6 @@
 ;;;; otakar/instruments.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022
 
 (in-package :otakar)
 
@@ -125,3 +125,12 @@
   (list (make-pitch 4 2) (make-pitch 9 2) (make-pitch 2 3) (make-pitch 7 3) (make-pitch 11 3) (make-pitch 4 4)))
 
 (defvar *guitar* (quick-instrument "guitar" *guitar-strings* 4))
+
+(defvar *viola-strings* (list (make-pitch 0 3) (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4)))
+
+(defvar *viola* (quick-instrument "viola" *viola-strings* 7))
+
+(defvar *cello-strings* (list (make-pitch 0 2) (make-pitch 7 2) (make-pitch 2 3) (make-pitch 9 3)))
+
+(defvar *cello* (quick-instrument "cello" *cello-strings* 5))
+

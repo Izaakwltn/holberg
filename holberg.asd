@@ -1,6 +1,6 @@
 ;;;; holberg.asd
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (asdf:defsystem #:holberg
   :version "0.0.1"

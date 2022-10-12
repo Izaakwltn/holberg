@@ -1,6 +1,6 @@
 ;;;; freqs.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022
 
 (in-package :holberg)
 
@@ -21,22 +21,22 @@
 
 (declaim (ftype (function (freq freq) (or t null)) same-freq-class-p))
 
-(defun same-freq-class-p (freq1 freq2)
-  "Checks whether two frequencies belong to the same freq-class.")
+;(defun same-freq-class-p (freq1 freq2)
+ ; "Checks whether two frequencies belong to the same freq-class.")
 
 
-(defvar pc-freq-table '((0 . 16.35)
-			(1 . 17.32)
-		        (2 . 18.35)
-	         	(3 . 19.45)
-			(4 . 20.6)
-			(5 . 21.83)
-			(6 . 23.12)
-			(7 . 24.5)
-			(8 . 25.96)
-			(9 . 27.5)
-			(10 . 29.14)
-			(11 . 30.87)))
+(defvar *pc-freq-table* '((0 . 16.35)
+		          (1 . 17.32)
+		          (2 . 18.35)
+	         	  (3 . 19.45)
+			  (4 . 20.6)
+			  (5 . 21.83)
+			  (6 . 23.12)
+			  (7 . 24.5)
+			  (8 . 25.96)
+			  (9 . 27.5)
+			  (10 . 29.14)
+			  (11 . 30.87)))
 
 ;;; Functions for converting pitches to freqs
 
@@ -50,7 +50,7 @@
 
 (defun pitch-to-freq (pc octave);;;has to use quoted note-name
   "Takes a note and octave, returns the note's frequency."
-  (octave-shift (cdr (assoc pc pc-freq-table)) octave))
+  (octave-shift (cdr (assoc pc *pc-freq-table*)) octave))
 
 ;;; Functions for converting freqs to pitches
 
@@ -84,7 +84,7 @@
   "Takes a frequency and returns a (note octave) pair."
   (destructuring-bind (canonical-freq octave)
       (minimize-freq freq 0)
-    (make-pitch (closest-pitch canonical-freq pc-freq-table) octave)))
+    (make-pitch (closest-pitch canonical-freq *pc-freq-table*) octave)))
 
 ;;;
 ;;; Operations with freqs
@@ -108,7 +108,7 @@
    |                 1           1/12|
    |f(1) = f(0) * (a)  where a = 2    |
    +----------------------------------+"
-  (* fixed (expt (expt 2 (/ 1 12)) 1)))
+  (* fixed (expt 2 (/ 1 12))))
 
 (declaim (ftype (function (freq freq) freqs) frequency-ladder))
 

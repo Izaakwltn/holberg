@@ -1,6 +1,6 @@
 ;;;; romans.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (in-package :holberg)
 
@@ -38,30 +38,58 @@
 (deftype roman ()
   `(satisfies roman-p))
 
+(defun romans-p (ls)
+  (loop :for r :in ls
+	:if (not (roman-p r))
+	  :return nil
+	:finally (return t)))
+
+(deftype romans ()
+  `(satisfies romans-p))
+;;; Finding chords by Roman Numeral
+
 (declaim (ftype (function (key roman) chord) roman-chord))
 
 (defun roman-chord (key roman)
+  "Finds the chord designated by the given roman numeral in the key."
+  (check-type key key)
+  (check-type roman roman)
   (let ((pcs (set-transpose (second (assoc roman *romans* :test #'equal)) (tonic key))))
     (make-chord (first pcs)
 		(chord-set-quality pcs))))
 
+;;; Finding roman numerals given chords
+
 (declaim (ftype (function (key chord) roman) chord-roman))
 
 (defun chord-roman (key chord)
+  "Returns the roman for a given chord in the given key."
+  (check-type key key)
+  (check-type chord chord)
   (let ((pcs (set-transpose (pc-set chord) (- (tonic key)))))
     (first (find-if #'(lambda (x)
 		 (equal (second x)
 		     pcs))
                     *romans*))))
 
-(declaim (ftype (function (key list) progression) roman-chord-list))
+;;; processing lists of chords or romans
+
+(declaim (ftype (function (key romans) progression) roman-chord-list))
 
 (defun roman-chord-list (key roman-list)
+  "Returns the chords designated by a list of romans."
+  (check-type key key)
+  (check-type roman-list romans)
   (mapcar #'(lambda (r)
               (roman-chord key r))
           roman-list))
 
+(declaim (ftype (function (key progression) romans) chord-roman-list))
+
 (defun chord-roman-list (key chord-list)
+  "Returns the respective romans for a given key and progression."
+  (check-type key key)
+  (check-type chord-list progression)
   (mapcar #'(lambda (c)
               (chord-roman key c))
           chord-list))

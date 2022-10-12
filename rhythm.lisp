@@ -1,6 +1,6 @@
 ;;;; rhythm.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (in-package :holberg)
 

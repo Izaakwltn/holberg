@@ -1,6 +1,6 @@
 ;;;; pitch-class-sets.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (in-package :holberg)
 
@@ -11,6 +11,7 @@
 
 (defun pc-set-p (ls)
   "Determines whether the list constitutes a pitch class set."
+  (check-type ls list)
   (cond ((null ls) t)
 	((not (typep (first ls) 'pitch-class))
 	 nil)
@@ -50,12 +51,14 @@
 (declaim (ftype (function (pc-set) pc-set) ascending))
 
 (defun ascending (pc-set)
+  "Sorts a pitch class set in ascending order."
   (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'<))
 
 (declaim (ftype (function (pc-set) pc-set) descending))
 
 (defun descending (pc-set)
+  "Sorts a pitch class set in descending order"
   (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'>))
 
@@ -138,6 +141,7 @@
 
 (defun set-complement (pc-set)
   "Finds the set's complement (the set containing all pcs not in the original set"
+  (check-type pc-set pc-set)
   (set-difference '(0 1 2 3 4 5 6 7 8 9 10 11) pc-set))
 
                                         ;(defun t-related-p (pcs1 pcs2)

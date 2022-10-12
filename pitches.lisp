@@ -1,6 +1,6 @@
 ;;;; pitches.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (in-package :holberg)
 
@@ -45,8 +45,12 @@
 
 ;;; checking for pitch equality
 
+(declaim (ftype (function (pitch pitch) (or t null)) pitch-equal))
+
 (defun pitch-equal (pitch1 pitch2)
   "Checks whether two pitches are equal"
+  (check-type pitch1 pitch)
+  (check-type pitch2 pitch)
   (and (equal (pc pitch1) (pc pitch2))
        (equal (octave pitch1) (octave pitch2))))
 

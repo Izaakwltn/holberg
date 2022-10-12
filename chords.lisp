@@ -1,6 +1,6 @@
 ;;;; chords.lisp
 ;;;;
-;;;;
+;;;; Copyright (c) 2022 Izaak Walton
 
 (in-package :holberg)
 
@@ -15,19 +15,29 @@
 			    ("sus4"      (0 4 5 7))
 			    ("power" (0 7)))) ;;sus4, power chords
 
-(declaim (ftype (function (string) pc-set) quality-pc-set))
+(defun chord-quality-p (n)
+  "Checks whether a string is a recognized chord quality."
+  (member n (mapcar #'first *chord-qualities*) :test #'equal))
+
+(deftype chord-quality ()
+  `(satisfies chord-quality-p))
+
+(declaim (ftype (function (chord-quality) pc-set) quality-pc-set))
 
 (defun quality-pc-set (quality)
   "Returns the normal order pc-set for a given quality."
+  (check-type quality chord-quality) 
   (second (find-if #'(lambda (q)
                        (string-equal (first q) quality))
           *chord-qualities*)))
 
 ;;; Finding chord quality of a given pc-set
 
-(declaim (ftype (function (pc-set integer) string) chord-set-quality-backend))
+(declaim (ftype (function (pc-set integer) chord-quality) chord-set-quality-backend))
 
 (defun chord-set-quality-backend (pc-set permutations)
+  (check-type pc-set pc-set)
+  (check-type permutations integer)
   (let ((q (find-if #'(lambda (n)
 		      (equal (second n) (set-transpose pc-set (- (first pc-set)))))
 			  *chord-qualities*)))
@@ -35,16 +45,22 @@
 	  ((zerop permutations) nil)
 	  (t (chord-set-quality-backend (set-permutate pc-set) (1- permutations))))))
 
-(declaim (ftype (function (pc-set) string) chord-set-quality))
+(declaim (ftype (function (pc-set) chord-quality) chord-set-quality))
 
 (defun chord-set-quality (pc-set)
+  "Returns the quality for a given pc-set."
+  (check-type pc-set pc-set)
   (chord-set-quality-backend (ascending pc-set) (1- (length pc-set))))
 
-(declaim (ftype (function (pitch-class string) pc-set) chord-pcs))
+(declaim (ftype (function (pitch-class chord-quality) pc-set) chord-pcs))
 
 (defun chord-pcs (pc-root quality)
   "Returns the pc-set for a given root and quality"
+  (check-type pc-root pitch-class)
+  (check-type quality string)
   (set-transpose (quality-pc-set quality) pc-root))
+
+;;; Chord class
 
 (defclass chord ()
   ((root  :initarg :root
@@ -61,24 +77,30 @@
                      (pc-set pc-set))
         obj
       (format stream "(~a/~a) ~a, ~a" root (number-name root) quality pc-set))))
-        
+
+(declaim (ftype (function (pitch-class chord-quality) chord) make-chord))
+
 (defun make-chord (root quality)
+  "Generates a chord object"
   (check-type root pitch-class)
+  (check-type quality chord-quality)
   (make-instance 'chord :root root
                         :quality quality
                         :pc-set (chord-pcs root quality)))
 
-;;;handling inversions------------ actually should just be for instr-chords?
+;;; handling inversions------------ actually should just be for instr-chords?
 
 (declaim (ftype (function (pc-set integer) pc-set) invert))
 
 (defun invert (chord-set inversion)
+  "Inverts a chord-set by the designated inversion"
   (loop :with cs := chord-set
 	:for i :from 1 :to inversion
 	:do (setq cs (set-permutate cs))
 	:finally (return cs)))
 
-;;; Add arpeggios next..... make the same structure for key/scale
+;;; Add arpeggios next..... arpeggios.lisp
+;;; unfinished territory-----------------------------------------
 
 (defclass arpeggio (chord)
   ((octavelength :initarg :octavelength
@@ -86,7 +108,7 @@
 
 (defun make-arpeggio (root quality octavelength)
   (check-type root pitch-class)
-  (check-type quality string)
+  (check-type quality chord-quality)
   (check-type octavelength integer)
   (make-instance 'arpeggio :root root
                            :quality quality
