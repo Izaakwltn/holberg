@@ -106,6 +106,18 @@
   ((octavelength :initarg :octavelength
                  :accessor octavelength)))
 
+(defmethod print-object ((obj arpeggio) stream)
+      (print-unreadable-object (obj stream :type t)
+        (with-accessors ((root root)
+			 (quality quality)
+			 (octavelength octavelength))
+; add arpeggio-pitches                         (scale-pitches scale-pitches))
+            obj
+          (format stream "~a ~a arpeggio, ~a octaves"
+		  root
+		  quality
+		  octavelength))))
+
 (defun make-arpeggio (root quality octavelength)
   (check-type root pitch-class)
   (check-type quality chord-quality)

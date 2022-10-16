@@ -24,7 +24,6 @@
 ;(defun same-freq-class-p (freq1 freq2)
  ; "Checks whether two frequencies belong to the same freq-class.")
 
-
 (defvar *pc-freq-table* '((0 . 16.35)
 		          (1 . 17.32)
 		          (2 . 18.35)
@@ -46,11 +45,11 @@
   "Shifts a frequency by a specified number of octaves"
   (* freq (expt 2 n)))
 
-(declaim (ftype (function (pitch-class integer) freq) pitch-to-freq))
+(declaim (ftype (function (pitch) freq) pitch-to-freq))
 
-(defun pitch-to-freq (pc octave);;;has to use quoted note-name
+(defun pitch-to-freq (pitch);;;has to use quoted note-name
   "Takes a note and octave, returns the note's frequency."
-  (octave-shift (cdr (assoc pc *pc-freq-table*)) octave))
+  (octave-shift (cdr (assoc (pc pitch) *pc-freq-table*)) (octave pitch)))
 
 ;;; Functions for converting freqs to pitches
 
@@ -61,7 +60,7 @@
   (cond ((< freq 31) (list freq counter))
 	(t (minimize-freq (/ freq 2) (+ counter 1)))))
 
-(declaim (ftype (function (freq freqs) pitch) closest-pitch))
+(declaim (ftype (function (freq list) pitch-class) closest-pitch))
 
 (defun closest-pitch (freq freq-list)
   "Returns the equal temperament pitch closest to the frequency."

@@ -59,7 +59,7 @@
 	   #:freq-to-pitch
 	   #:freq-transpose
 	   #:freq-incr
-	   #:frequency-ladder
+	   #:frequency-ladder)
 
   ;;; collections.lisp
   (:export #:collection ; type
@@ -86,7 +86,7 @@
            #:make-chord
 	   #:invert
            #:arpeggio
-	   #:make-arpeggio))
+	   #:make-arpeggio)
 
   ;;; progressions.lisp
   (:export #:progression-p
