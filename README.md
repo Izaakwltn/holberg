@@ -5,10 +5,10 @@ Holberg is a statically typed atomic music theory library, built using Pitch-Cla
 
 In addition to its general purpose theory functions, Holberg currently features two specialized libraries (with others being prepared offstage):\
 
-##### [Seria](https://www.github.com/Izaakwltn/holberg/seria)
+##### [Seria](https://www.github.com/Izaakwltn/holberg/tree/main/seria)
 a library for generating and analyzing twelve tone serial tone-rows and tone-matrices.\
 and\
-##### [otakar](https://www.github.com/Izaakwltn/holberg/otakar)
+##### [otakar](https://www.github.com/Izaakwltn/holberg/tree/main/otakar)
 a library for working with stringed instruments, currently with chord generation and resonance analysis functions.\
 
 ## A Brief Introduction to Holberg's theory system
