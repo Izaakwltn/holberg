@@ -5,20 +5,13 @@ Holberg is a statically typed atomic music theory library, built using Pitch-Cla
 
 In addition to its general purpose theory functions, Holberg currently features two specialized libraries (with others being prepared offstage):\
 
-#####[Seria]{github.com/Izaakwltn/holberg/seria}
+##### [Seria](github.com/Izaakwltn/holberg/seria)
 a library for generating and analyzing twelve tone serial tone-rows and tone-matrices.\
 and\
-#####[otakar]{github.com/Izaakwltn/holberg/otakar}
+##### [otakar](github.com/Izaakwltn/holberg/otakar)
 a library for working with stringed instruments, currently with chord generation and resonance analysis functions.\
 
-There are several built-in basic types:\
-pitch-class: an integer between 0 and 11 denoting a "note-name"\
-pc-set: a set of pitch-classes\
-pitch: a pitch-class, octave pair\
-collection: a collection of pitches (allows for repetition)\
-(soon to be added- note: a pitch and duration pair, freq: a frequency)
-
-##A Brief Introduction to Holberg's theory system
+## A Brief Introduction to Holberg's theory system
 ### Pitch Classes and Pitch Class Sets
 The twelve tones of the western traditional system are processed using digits 0-11. C is 0, C# is 1... B is 11. From there, all pitch-class operations can be handled as modular arithmetic.
 
@@ -180,26 +173,3 @@ HOLBERG> test-collection
 HOLBERG> (chord-roman-list test-key test-progression)
 ("I" "IV" "V" "I")
 ```
-
-
-
-## Sub-libraries
-
-Holberg currently features two specialized libraries: Seria, for serial 12-tone theory, and Otakar, a library with tools for stringed instruments.
-
-### To try out the Otakar Chord Generator:
-
-(ql:quickload :otakar) or (asdf:load-system :otakar)
-
-(in-package :otakar)
-
-(fretted-full-chords \*ukulele* (make-chord 2 "half-dim7")) ; D Half Diminished-7th
-(fretted-full-chords \*violin* (make-chord 9 "major")) ; A Major
-
-Current chord qualities: ("minor" "major" "dim" "aug" "min7" "maj7" "half-dim7" "dim7")
-
-#### Use a preset instrument:
-\*violin* \*ukulele* \*guitar* 
-
-#### Or add a new instrument:
-(defvar \*instrument* (quick-instrument "instrument-name" (list (make-pitch pitch-class octave) (make-pitch pitch-class octave) ...) reach-in-half-steps))
