@@ -7,9 +7,8 @@ In addition to its general purpose theory functions, Holberg currently features 
 
 ##### [Seria](https://www.github.com/Izaakwltn/holberg/tree/main/seria)
 a library for generating and analyzing twelve tone serial tone-rows and tone-matrices.\
-and\
 ##### [otakar](https://www.github.com/Izaakwltn/holberg/tree/main/otakar)
-a library for working with stringed instruments, currently with chord generation and resonance analysis functions.\
+a library for working with stringed instruments, currently with chord generation and resonance analysis functions.
 
 ## A Brief Introduction to Holberg's theory system
 ### Pitch Classes and Pitch Class Sets
