@@ -21,9 +21,7 @@
 
 (declaim (ftype (function (freq freq) (or t null)) same-freq-class-p))
 
-;(defun same-freq-class-p (freq1 freq2)
- ; "Checks whether two frequencies belong to the same freq-class.")
-
+;;;;maybe refactor as equal temperament
 (defvar *pc-freq-table* '((0 . 16.35)
 		          (1 . 17.32)
 		          (2 . 18.35)

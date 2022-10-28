@@ -9,12 +9,12 @@
 ;;;
 ;;;
 
-; {
-; \clef bass
-; c4 d e f
-; g4 a b c
-; d4 e f g
-                                        ; }
+;;; {
+;;; \clef bass
+;;; c4 d e f
+;;; g4 a b c
+;;; d4 e f g
+;;; }
 
 (defvar *lilypond-notes* '((0 ("c" "bis"))
                            (1 ("cis" "des"))
@@ -32,7 +32,8 @@
 (defun lilypond-pc (lily-name)
   (first (find-if #'(lambda (l)
                (member lily-name (second l) :test #'equal))
-           *lilypond-notes*)))
+		  *lilypond-notes*)))
+
 (ql:quickload :alexa)
 
 (deftype token ()
@@ -43,11 +44,11 @@
 
 (alexa:define-string-lexer lily-lexer
   ()
-  ("\\\clef" (return (tok :clef)))
+  ("\\\[A-Z][a-z]*" (return (tok :lily-keyword $@)))
   ("\\d+" (return (tok :number (parse-integer $@))))
   ("\\{" (return (tok :left-curly)))
   ("\\}" (return (tok :right-curly)))
-  ("[a-g]" (return (tok :pc (name-number (write-to-string $@)))))
+  ("[a-g]" (return (tok :pc (princ $@))))
   (" " nil))
 
 (defun lily-lex (lily-string)

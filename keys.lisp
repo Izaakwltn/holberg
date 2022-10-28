@@ -22,6 +22,12 @@
                      ("whole-tone"       (0 2 4 6 8 10))
 		     ("chromatic"        (0 1 2 3 4 5 6 7 8 9 10 11))))
 
+(defun key-quality-p (n)
+  (member n (mapcar #'first *key-list*) :test #'equal))
+
+(deftype key-quality ()
+  `(satisfies chord-quality-p))
+
 ;;; searching for a quality's pc-set
 
 (declaim (ftype (function (string) pc-set) key-set))

@@ -49,6 +49,10 @@
 	((member counter key-set)
 	 (cons (first freq-list) (pythag-key-freqs-backend (rest freq-list) key-set (1+ counter))))
 	(t (pythag-key-freqs-backend (rest freq-list) key-set (1+ counter)))))
-	    
+
+(declaim (ftype (function (freq key-quality) freqs) pythag-key-freqs))
+
 (defun pythag-key-freqs (root quality)
   (pythag-key-freqs-backend (pythag-chromatic-octave root) (key-set quality) 0))
+
+(mapcar #'freq-to-pitch (pythag-key-freqs 440.0 "major"))
