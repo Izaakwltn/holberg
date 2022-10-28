@@ -38,28 +38,29 @@
 ;;; Functions for converting pitches to freqs
 
 (declaim (ftype (function (freq integer) freq) octave-shift))
-
 (defun octave-shift (freq n)
   "Shifts a frequency by a specified number of octaves"
+  (check-type freq freq)
+  (check-type n integer)
   (* freq (expt 2 n)))
 
 (declaim (ftype (function (pitch) freq) pitch-to-freq))
-
 (defun pitch-to-freq (pitch);;;has to use quoted note-name
   "Takes a note and octave, returns the note's frequency."
+  (check-type pitch pitch)
   (octave-shift (cdr (assoc (pc pitch) *pc-freq-table*)) (octave pitch)))
 
 ;;; Functions for converting freqs to pitches
 
 (declaim (ftype (function (freq integer) list) minimize-freq))
-
 (defun minimize-freq (freq counter)
   "Minimizes the frequency until it's in the base octave."
+  (check-type freq freq)
+  (check-type counter integer)
   (cond ((< freq 31) (list freq counter))
 	(t (minimize-freq (/ freq 2) (+ counter 1)))))
 
 (declaim (ftype (function (freq list) pitch-class) closest-pitch))
-
 (defun closest-pitch (freq freq-list)
   "Returns the equal temperament pitch closest to the frequency."
   (loop :with min-pc := (car (first freq-list))
@@ -76,7 +77,6 @@
 				 min-dist))))
 
 (declaim (ftype (function (freq) pitch) freq-to-pitch))
-
 (defun freq-to-pitch (freq)
   "Takes a frequency and returns a (note octave) pair."
   (destructuring-bind (canonical-freq octave)
@@ -84,11 +84,10 @@
     (make-pitch (closest-pitch canonical-freq *pc-freq-table*) octave)))
 
 ;;;
-;;; Operations with freqs
-;;;
+;;; Operations with freqs (equal temperament)
+;;; 
 
 (declaim (ftype (function (freq integer) freq) freq-transpose))
-
 (defun freq-transpose (root interval)
   "Raises or lowers a root frequency by an interval n in half-steps.
     +----------------------------------+
@@ -98,7 +97,6 @@
   (* root (expt (expt 2 (/ 1 12)) interval)))
 
 (declaim (ftype (function (freq) freq) freq-incr))
-
 (defun freq-incr (fixed)
   "Raises a frequency by one half-step, for building chromatic test samples.
    +----------------------------------+
@@ -108,7 +106,6 @@
   (* fixed (expt 2 (/ 1 12))))
 
 (declaim (ftype (function (freq freq) freqs) frequency-ladder))
-
 (defun frequency-ladder (min max)
   "Builds a chromatic test-sample within the bounds."
   (cond ((> min max) nil)

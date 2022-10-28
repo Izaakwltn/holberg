@@ -4,8 +4,9 @@
 
 (in-package :holberg)
 
-;;; Defining the progression type
+;;; Defining the progression type, a list of chords
 
+(declaim (ftype (function (list) (or t null)) progression-p))
 (defun progression-p (ls)
   (loop :for i :in ls
 	:if (not (typep i 'chord))
@@ -14,6 +15,11 @@
 
 (deftype progression ()
   `(satisfies progression-p))
+
+;;;
+;;;A Few examples
+;;;
+
 ;;; Finding all chords for a key without accidentals
 
 (defmethod key-triads ((key key))
@@ -26,21 +32,19 @@
 	  :for k :in pcs3
 	  :collect (make-chord i (chord-set-quality (list i j k))))))
 
-;;; maybe add roman numerals
-
 ;;; circle of fifths --- maybe a separate document at some point
 
 (declaim (ftype (function (pitch-class) pc-set) pc-circle-of-fifths-up))
-
 (defun pc-circle-of-fifths-up (first-pc)
   "Cycles up the circle of fifths from a given pitch class"
+  (check-type first-pc pitch-class)
   (loop :for i :from 0 :to 11
 	:collect (pc-transpose first-pc (* i 7))))
 
 (declaim (ftype (function (pitch-class) pc-set) pc-circle-of-fifths-down))
-
 (defun pc-circle-of-fifths-down (first-pc)
   "Cycles down the circle of fifths from a given pitch class."
+  (check-type first-pc pitch-class)
   (loop :for i :from 0 :to 11
 	:collect (pc-transpose first-pc (- (* i 7)))))
 

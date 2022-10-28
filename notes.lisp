@@ -20,7 +20,6 @@
       (format stream "~a, duration: ~a" pitch duration))))
 
 (declaim (ftype (function (pitch number) note) make-note))
-
 (defun make-note (pitch duration)
   (check-type pitch pitch)
   (make-instance 'note :pitch pitch
@@ -29,7 +28,6 @@
 ;;; collections of notes
 
 (declaim (ftype (function (list) (or null t)) note-collection-p))
-
 (defun note-collection-p (ls)
   (loop :for i :in ls
 	:if (not (typep i 'note))
@@ -54,7 +52,6 @@
       (format stream "~{~a~%~}, duration: ~a" note-collection duration))))
 
 (declaim (ftype (function (note-collection) note-chord) make-note-chord))
-
 (defun make-note-chord (note-collection)
   (check-type note-collection note-collection)
   (make-instance 'note-chord :note-collection note-collection

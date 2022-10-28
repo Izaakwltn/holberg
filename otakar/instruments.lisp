@@ -28,8 +28,9 @@
               "~a~%Strings: ~a~%Reach: ~a frets/steps~%Range: ~a-~a"
               name strings reach low high))))
 
+;;;
+;;;use freq instread of pitch for the strings, for resonance and other calculations
 (declaim (ftype (function (string collection integer pitch pitch) instrument) make-instrument))
-
 (defun make-instrument (instrument-name string-pitches reach-steps low-note high-note)
   (make-instance 'instrument
                  :name instrument-name
@@ -41,14 +42,12 @@
 ;;; setting default upper and lower bounds for an instrument
 
 (declaim (ftype (function (collection) pitch) lower-bound))  
-
 (defun lower-bound (string-pitches)
   "Finds the lowest note on the instrument."
   (first (sort (copy-list string-pitches) #'lower-pitch-p)))
 
 
 (declaim (ftype (function (collection) pitch) upper-bound))
-
 (defun upper-bound (string-pitches)
   "Finds the probable highest note on the instrument."
   (pitch-transpose (first (sort (copy-list string-pitches) #'higher-pitch-p))
@@ -56,8 +55,8 @@
 
 
 ;;; Quickly add an instrument without upperbound or lowerbound
-(declaim (ftype (function (string collection integer) instrument) quick-instrument))
 
+(declaim (ftype (function (string collection integer) instrument) quick-instrument))
 (defun quick-instrument (instrument-name string-pitches reach-steps)
   "Quick add instrument without supplying outerbounds."
   (make-instrument instrument-name
@@ -67,9 +66,7 @@
                    (upper-bound string-pitches)))
 
 ;;; Instrument reach and frets
-
 (declaim (ftype (function (pitch integer) collection) reachable-notes))
-
 (defun reachable-notes (string-pitch reach-steps)
   "Determines the reachable notes on a given string"
   (if (zerop reach-steps)
@@ -77,7 +74,6 @@
       (cons string-pitch (reachable-notes (pitch-incr string-pitch) (1- reach-steps)))))
 
 (declaim (ftype (function (pitch pitch) integer) find-fret))
-
 (defun find-fret (string-pitch note-pitch)
   "Finds the lowest possible fret number for a pitch class on a string"
   (pitch-interval string-pitch note-pitch))
@@ -101,7 +97,6 @@
       (format stream "String ~a, Fret ~a, Pitch: ~a" string-pitch fret note-pitch))))
 
 (declaim (ftype (function (pitch pitch) pitch-on-string) make-pitch-on-string))
-
 (defun make-pitch-on-string (string-pitch note-pitch)
   (make-instance 'pitch-on-string :string-pitch string-pitch
                                   :note-pitch note-pitch

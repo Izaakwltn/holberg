@@ -42,14 +42,15 @@
 ;;; Finding intervals between pitch classes
 
 (declaim (ftype (function (pitch-class pitch-class integer) integer) pc-interval-backend))
-
 (defun pc-interval-backend (pclow pchigh interval)
   "Backend for pc-interval"
+  (check-type pclow pitch-class)
+  (check-type pchigh pitch-class)
+  (check-type interval integer)
   (cond ((equal pclow pchigh) interval)
 	(t (pc-interval-backend (pc-incr pclow) pchigh (1+ interval)))))
 
 (declaim (ftype (function (pitch-class pitch-class) integer) pc-interval))
-
 (defun pc-interval (pc1 pc2)
   "Finds the interval in between two pitch-classes"
   (check-type pc1 pitch-class)

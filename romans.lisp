@@ -33,7 +33,6 @@
 
 (defun roman-p (x)
   (member x (mapcar #'first *romans*) :test #'equal))
-					;defun roman-p, deftype roman, member of list of all
 
 (deftype roman ()
   `(satisfies roman-p))
@@ -49,7 +48,6 @@
 ;;; Finding chords by Roman Numeral
 
 (declaim (ftype (function (key roman) chord) roman-chord))
-
 (defun roman-chord (key roman)
   "Finds the chord designated by the given roman numeral in the key."
   (check-type key key)
@@ -61,7 +59,6 @@
 ;;; Finding roman numerals given chords
 
 (declaim (ftype (function (key chord) roman) chord-roman))
-
 (defun chord-roman (key chord)
   "Returns the roman for a given chord in the given key."
   (check-type key key)
@@ -75,7 +72,6 @@
 ;;; processing lists of chords or romans
 
 (declaim (ftype (function (key romans) progression) roman-chord-list))
-
 (defun roman-chord-list (key roman-list)
   "Returns the chords designated by a list of romans."
   (check-type key key)
@@ -85,7 +81,6 @@
           roman-list))
 
 (declaim (ftype (function (key progression) romans) chord-roman-list))
-
 (defun chord-roman-list (key chord-list)
   "Returns the respective romans for a given key and progression."
   (check-type key key)

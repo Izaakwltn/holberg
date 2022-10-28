@@ -30,7 +30,6 @@
                   scale-pitches))))
 
 (declaim (ftype (function (key pitch pitch) collection) populate-scale))
-
 (defun populate-scale (key first-pitch last-pitch)
   "Finds the pitches for a given scale"
   (check-type key key)
@@ -44,8 +43,9 @@
                                last-pitch)))
         (t (populate-scale key (pitch-incr first-pitch) last-pitch))))
 
-(declaim (ftype (function (key pitch pitch) scale) make-scale))
+;;; Actually making the scale
 
+(declaim (ftype (function (key pitch pitch) scale) make-scale))
 (defun make-scale (key first-pitch last-pitch)
   "Makes a scale in between two pitches (can handle non-chord pitches)."
   (check-type key key)

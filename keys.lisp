@@ -22,7 +22,10 @@
                      ("whole-tone"       (0 2 4 6 8 10))
 		     ("chromatic"        (0 1 2 3 4 5 6 7 8 9 10 11))))
 
+(declaim (ftype (function (string) (or t null)) key-quality-p))
 (defun key-quality-p (n)
+  "Defines the key-quality type"
+  (check-type n string)
   (member n (mapcar #'first *key-list*) :test #'equal))
 
 (deftype key-quality ()
@@ -30,10 +33,10 @@
 
 ;;; searching for a quality's pc-set
 
-(declaim (ftype (function (string) pc-set) key-set))
-
+(declaim (ftype (function (key-quality) pc-set) key-set))
 (defun key-set (quality-string)
   "Returns the key pc-set for a given quality."
+  (check-type quality-string key-quality)
   (second (assoc quality-string *key-list* :test #'string-equal)))
 
 ;;; making Key objects
@@ -58,16 +61,18 @@
 		  quality
                   pc-set))))
 
-(declaim (ftype (function (pitch-class string) key) make-key))
-
+(declaim (ftype (function (pitch-class key-quality) key) make-key))
 (defun make-key (tonic quality)
   "Makes an instance of key."
+  (check-type tonic pitch-class)
+  (check-type quality key-quality)
   (make-instance 'key :tonic tonic
                       :quality quality
                       :pc-set (set-transpose (key-set quality) tonic)))
 
-(declaim (ftype (function (key integer) key) key-transpose))
+;;;
 
+(declaim (ftype (function (key integer) key) key-transpose))
 (defun key-transpose (key interval)
   "Transposes a key by a given interval."
   (make-key (pc-transpose (tonic key) interval) (quality key)))
@@ -75,7 +80,6 @@
 ;;; relative and parallel keys
 
 (declaim (ftype (function (key) key) relative-key))
-
 (defun relative-key (key)
   "Returns the relative major or minor for a given key."
   (let ((quality (quality key))
@@ -87,15 +91,11 @@
                   "major"))))
 
 (declaim (ftype (function (key) key) parallel-key))
-
 (defun parallel-key (key)
   "Returns the parallel major or minor for a given key"
   (make-key (tonic key)
             (if (string-equal (quality key) "major")
                 "natural-minor"
                 "major")))
-
-;;;make-chord 
-;(defmethod triads ((key key))
   
   

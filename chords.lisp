@@ -23,7 +23,6 @@
   `(satisfies chord-quality-p))
 
 (declaim (ftype (function (chord-quality) pc-set) quality-pc-set))
-
 (defun quality-pc-set (quality)
   "Returns the normal order pc-set for a given quality."
   (check-type quality chord-quality) 
@@ -34,7 +33,6 @@
 ;;; Finding chord quality of a given pc-set
 
 (declaim (ftype (function (pc-set integer) chord-quality) chord-set-quality-backend))
-
 (defun chord-set-quality-backend (pc-set permutations)
   (check-type pc-set pc-set)
   (check-type permutations integer)
@@ -46,14 +44,14 @@
 	  (t (chord-set-quality-backend (set-permutate pc-set) (1- permutations))))))
 
 (declaim (ftype (function (pc-set) chord-quality) chord-set-quality))
-
 (defun chord-set-quality (pc-set)
   "Returns the quality for a given pc-set."
   (check-type pc-set pc-set)
   (chord-set-quality-backend (ascending pc-set) (1- (length pc-set))))
 
-(declaim (ftype (function (pitch-class chord-quality) pc-set) chord-pcs))
+;;; Finding the pc-set for a given chord-quality
 
+(declaim (ftype (function (pitch-class chord-quality) pc-set) chord-pcs))
 (defun chord-pcs (pc-root quality)
   "Returns the pc-set for a given root and quality"
   (check-type pc-root pitch-class)
@@ -79,7 +77,6 @@
       (format stream "(~a/~a) ~a, ~a" root (number-name root) quality pc-set))))
 
 (declaim (ftype (function (pitch-class chord-quality) chord) make-chord))
-
 (defun make-chord (root quality)
   "Generates a chord object"
   (check-type root pitch-class)
@@ -91,7 +88,6 @@
 ;;; handling inversions------------ actually should just be for instr-chords?
 
 (declaim (ftype (function (pc-set integer) pc-set) invert))
-
 (defun invert (chord-set inversion)
   "Inverts a chord-set by the designated inversion"
   (loop :with cs := chord-set
@@ -117,6 +113,7 @@
 		  root
 		  quality
 		  octavelength))))
+
 
 (defun make-arpeggio (root quality octavelength)
   (check-type root pitch-class)

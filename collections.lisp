@@ -7,7 +7,6 @@
 ;;; Defining collections of notes
 
 (declaim (ftype (function (list) (or t null)) collection-p))
-
 (defun collection-p (ls)
   "Checks whether a list is a collection of pitches."
   (check-type ls list)
@@ -22,14 +21,12 @@
 ;;; sorting collections
 
 (declaim (ftype (function (collection) collection) ascending-collection))
-
 (defun ascending-collection (collection)
   "Returns a pitch collection in ascending order"
   (check-type collection collection)
   (sort (copy-list collection) #'lower-pitch-p))
 
 (declaim (ftype (function (collection) collection) descending-collection))
-
 (defun descending-collection (collection)
   "Returns a pitch collection in descending order"
   (check-type collection collection)
@@ -38,7 +35,6 @@
 ;;; Converting note collections to pitch class sets
 
 (declaim (ftype (function (collection) pc-set) make-pc-set))
-
 (defun make-pc-set (collection)
   "Removes pitch class duplicates while maintaining order"
   (check-type collection collection)
@@ -51,7 +47,6 @@
 	:finally (return pcs)))
 
 (declaim (ftype (function (collection) pitch-class-set) collect-set))
-
 (defun collect-set (collection)
   "Makes a Pitch Class Set class object from a collection"
   (check-type collection collection)

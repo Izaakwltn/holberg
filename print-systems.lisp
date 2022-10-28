@@ -11,7 +11,6 @@
 ;;; pitch-names
 
 (declaim (ftype (function (symbol) (or t null)) pitch-name-p))
-
 (defun pitch-name-p (i)
   (member i '(C C# Db D D# Eb E E# F F# Gb G G# Ab A A# Bb B B#)))
 	      
@@ -32,23 +31,23 @@
 		   (11 (B Cb))))
 
 (declaim (ftype (function (symbol) pitch-class) name-number))
-
 (defun name-number (name)
   "Returns the pitch-class for a given pitch-name"
+  (check-type name symbol)
   (first (find-if #'(lambda (i)
 	       (member name (second i)))
 		  name-key)))
 
 (declaim (ftype (function (pitch-class) symbol) number-name))
-
 (defun number-name (n)
   "Returns a pitch-name for a given pitch-class, may be enharmonically awkward."
+  (check-type n pitch-class)
   (first (second (assoc n name-key))))
 
 (declaim (ftype (function (pc-set) list) name-set))
-
 (defun name-set (pc-set)
   "Returns a pc-set converted to standard pitch names."
+  (check-type pc-set pc-set)
   (mapcar #'number-name pc-set))
 
 ;;;

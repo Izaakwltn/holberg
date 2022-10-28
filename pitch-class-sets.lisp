@@ -8,7 +8,6 @@
 ;;; Pitch Class Sets
 
 (declaim (ftype (function (list) (or t null)) pc-set-p))
-
 (defun pc-set-p (ls)
   "Determines whether the list constitutes a pitch class set."
   (check-type ls list)
@@ -39,7 +38,6 @@
 			   (12 dodecachord)))
 
 (declaim (ftype (function (pc-set) symbol) n-element-name))
-
 (defun n-element-name (pc-set)
   "Returns the designated name for the length of pitch-class set"
   (check-type pc-set pc-set)
@@ -49,14 +47,12 @@
 ;;; Ordering Pitch-class sets
 
 (declaim (ftype (function (pc-set) pc-set) ascending))
-
 (defun ascending (pc-set)
   "Sorts a pitch class set in ascending order."
   (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'<))
 
 (declaim (ftype (function (pc-set) pc-set) descending))
-
 (defun descending (pc-set)
   "Sorts a pitch class set in descending order"
   (check-type pc-set pc-set)
@@ -65,7 +61,6 @@
 ;;; Set transposition
 
 (declaim (ftype (function (pc-set integer) pc-set) set-transpose))
-
 (defun set-transpose (pc-set interval)
   "Transposes a pitch class set by a given interval"
   (check-type pc-set pc-set)
@@ -85,7 +80,6 @@
 ;;; finding Normal Order and Normal Form
 
 (declaim (ftype (function (pc-set) integer) first-last-interval))
-
 (defun first-last-interval (pc-set)
   "Finds the interval between the first PC and last PC in a PC set"
   (check-type pc-set pc-set)
@@ -93,7 +87,6 @@
 	       (car (last pc-set))))
 
 (declaim (ftype (function (pc-set pc-set) (or t nil)) more-normal-p))
-
 (defun more-normal-p (pcs-1 pcs-2)
   "Finds the more normalized of two pc-sets"
   (check-type pcs-1 pc-set)
@@ -114,7 +107,6 @@
 				pcs-2)))))
 
 (declaim (ftype (function (pc-set) pc-set) normal-order))
-
 (defun normal-order (pc-set)
   "Returns the normal order for a pc-set (organized by smallest intervals)"
   (check-type pc-set pc-set)
@@ -128,7 +120,6 @@
 	:finally (return normalest)))
 
 (declaim (ftype (function (pc-set) pc-set) normal-form))
-
 (defun normal-form (pc-set)
   "Returns the normal form for a given pitch-class set"
   (check-type pc-set pc-set)
@@ -138,7 +129,6 @@
 ;;; Pitch Class Set Symmetry
 
 (declaim (ftype (function (pc-set) pc-set) set-compliment))
-
 (defun set-complement (pc-set)
   "Finds the set's complement (the set containing all pcs not in the original set"
   (check-type pc-set pc-set)
@@ -150,16 +140,16 @@
   ;(check-type pcs2 pc-set)
  ; (equal (set-transpose pcs1 (- (first pcs1)
    
-(defun t-symmetry (pc-set)
-  "Returns the degree of transpositional symmetry, 
-   the number of transpositions which return the same unordered pc-set"
-  (check-type pc-set pc-set)
-  (loop :with count := 0
-	:for i :from 0 :to 11
-	:if (equal (ascending pc-set)
-		   (ascending (set-transpose pc-set i)))
-	  :do (setq count (1+ count))
-	:finally (return count)))
+;(defun t-symmetry (pc-set)
+ ; "Returns the degree of transpositional symmetry, 
+  ; the number of transpositions which return the same unordered pc-set"
+ ; (check-type pc-set pc-set)
+  ;(loop :with count := 0
+;	:for i :from 0 :to 11
+;	:if (equal (ascending pc-set)
+;		   (ascending (set-transpose pc-set i)))
+;	  :do (setq count (1+ count))
+;	:finally (return count)))
 
 
 ;;; Pitch Class Pitch definition, mainly for easy reading
@@ -181,7 +171,6 @@
       (format stream "~a {~{ ~a~}}, Normal Form: {~{ ~a~}}" n-elem-name pc-set normalized)))) ; (find-quality pc-set)))))
 
 (declaim (ftype (function (pc-set) pitch-class-set) make-pitch-class-set))
-
 (defun make-pitch-class-set (pc-set)
   "Makes a pitch-class-set class object"
   (check-type pc-set pc-set)
