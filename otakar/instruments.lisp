@@ -30,40 +30,38 @@
 
 ;;;
 ;;;use freq instread of pitch for the strings, for resonance and other calculations
-(declaim (ftype (function (string collection integer pitch pitch) instrument) make-instrument))
-(defun make-instrument (instrument-name string-pitches reach-steps low-note high-note)
+(declaim (ftype (function (string freqs integer freq freq) instrument) make-instrument))
+(defun make-instrument (instrument-name string-freqs reach-steps low-note high-note)
   (make-instance 'instrument
                  :name instrument-name
-                 :strings string-pitches
+                 :strings string-freqs
                  :reach   reach-steps
                  :low     low-note
                  :high    high-note))
 
 ;;; setting default upper and lower bounds for an instrument
 
-(declaim (ftype (function (collection) pitch) lower-bound))  
-(defun lower-bound (string-pitches)
+(declaim (ftype (function (freqs) freq) lower-bound))  
+(defun lower-bound (string-freqs)
   "Finds the lowest note on the instrument."
-  (first (sort (copy-list string-pitches) #'lower-pitch-p)))
+  (reduce #'min string-freqs))
 
 
-(declaim (ftype (function (collection) pitch) upper-bound))
-(defun upper-bound (string-pitches)
+(declaim (ftype (function (freqs) freq) upper-bound))
+(defun upper-bound (string-freqs)
   "Finds the probable highest note on the instrument."
-  (pitch-transpose (first (sort (copy-list string-pitches) #'higher-pitch-p))
-                      36))
-
+  (* 3 (reduce #'max string-freqs)))
 
 ;;; Quickly add an instrument without upperbound or lowerbound
 
-(declaim (ftype (function (string collection integer) instrument) quick-instrument))
-(defun quick-instrument (instrument-name string-pitches reach-steps)
+(declaim (ftype (function (string freqs integer) instrument) quick-instrument))
+(defun quick-instrument (instrument-name string-freqs reach-steps)
   "Quick add instrument without supplying outerbounds."
   (make-instrument instrument-name
-                   string-pitches
+                   string-freqs
                    reach-steps
-                   (lower-bound string-pitches)
-                   (upper-bound string-pitches)))
+                   (lower-bound string-freqs)
+                   (upper-bound string-freqs)))
 
 ;;; Instrument reach and frets
 (declaim (ftype (function (pitch integer) collection) reachable-notes))
@@ -103,29 +101,32 @@
                                   :fret (find-fret string-pitch note-pitch)))
 
 ;;; Strings
+
+(defmethod string-pitches ((instrument instrument))
+  (mapcar #'freq-to-pitch (strings instrument)))
+
 (defmethod string-pcs ((instrument instrument))
-  (mapcar #'holberg::pc (strings instrument)))
+  (mapcar #'holberg::pc (string-pitches instrument)))
 
 ;;; Predefined standard instruments:
 
-(defvar *violin-strings* (list (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4) (make-pitch 4 5)))
+(defvar *violin-strings* '(196.0 293.6 440.0 660.0))
 
 (defvar *violin* (quick-instrument "violin" *violin-strings* 7))
 
-(defvar *ukulele-strings* (list (make-pitch 7 4) (make-pitch 0 4) (make-pitch 4 4) (make-pitch 9 4)))
+(defvar *ukulele-strings* '(392.0 261.63 329.63 440.0))
 
 (defvar *ukulele* (quick-instrument "ukulele" *ukulele-strings* 7))
 
-(defvar *guitar-strings*
-  (list (make-pitch 4 2) (make-pitch 9 2) (make-pitch 2 3) (make-pitch 7 3) (make-pitch 11 3) (make-pitch 4 4)))
+(defvar *guitar-strings* '(82.41 110.0 146.83 196.0 246.94 329.63))
 
 (defvar *guitar* (quick-instrument "guitar" *guitar-strings* 4))
 
-(defvar *viola-strings* (list (make-pitch 0 3) (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4)))
+(defvar *viola-strings* (mapcar #'pitch-to-freq (list (make-pitch 0 3) (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4))))
 
 (defvar *viola* (quick-instrument "viola" *viola-strings* 7))
 
-(defvar *cello-strings* (list (make-pitch 0 2) (make-pitch 7 2) (make-pitch 2 3) (make-pitch 9 3)))
+(defvar *cello-strings* (mapcar #'pitch-to-freq (list (make-pitch 0 2) (make-pitch 7 2) (make-pitch 2 3) (make-pitch 9 3))))
 
 (defvar *cello* (quick-instrument "cello" *cello-strings* 5))
 

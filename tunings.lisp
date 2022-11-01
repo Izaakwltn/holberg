@@ -30,7 +30,7 @@
 
 (defun pythag-chromatic-octave (root)
   "Finds a series of semitones using pythagorean tuning, starting from a given root."
-  (check-type freq freq)
+  (check-type root freq)
   (sort (loop :with freqs := nil
 	:with current-freq := root
 
