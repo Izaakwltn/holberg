@@ -26,4 +26,5 @@
                (:file "notes")
                (:file "measures")
 	       (:file "freqs")
+               (:file "overtones")
 	       (:file "tunings")))
