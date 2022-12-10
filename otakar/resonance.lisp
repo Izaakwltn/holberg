@@ -16,7 +16,8 @@
 (defmethod sympathetics ((instrument instrument) freq)
   "Collects all sympathetically resonant frequencies when a freq is played on the instrument"
   (check-type freq freq)
-  (collect-symps freq (strings instrument)))
+  (sort (collect-symps freq (strings instrument))
+        #'<))
 
 (defmethod symp-rating ((instrument instrument) freq)
   "Returns the total number of sympathetic vibrations when a frequency is played on an instrument."
