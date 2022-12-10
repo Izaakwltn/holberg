@@ -28,7 +28,7 @@
   "Collects a list of sympathetic vibrations on each string"
   (cond ((null string-freqs) nil)
         (t (cons (holberg::compare-overtones freq (first string-freqs))
-                 (collect-symps freq (rest string-freqs))))))
+                 (symps-by-string freq (rest string-freqs))))))
 
 (defmethod instrument-symps ((instrument instrument) freq)
   (symps-by-string freq (strings instrument)))

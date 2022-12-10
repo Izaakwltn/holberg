@@ -14,4 +14,5 @@
                 :components ((:file "package")
                              (:file "instruments")
 	                     (:file "chords")
-	                     (:file "chord-generator"))))) ; probably change to chord-generation
+	                     (:file "chord-generator")
+                             (:file "resonance"))))) ; probably change to chord-generation
