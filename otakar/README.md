@@ -24,6 +24,8 @@ then
 
 ```'("minor" "major" "dim" "aug" "min7" "maj7" "half-dim7" "dim7")```
 
+### Generating chords using holberg chords:
+
 ```(fretted-full-chords instrument chord)``` returns a voicing of a chord, using all chord tones and all strings on the instrument:
 
 ```(fretted-full-chords *violin* (make-chord 2 "major")) ; D major```
