@@ -9,7 +9,8 @@ then
 
 ```(in-package :otakar)```
 
-Current Preset instruments:
+#### Current Preset instruments:
+
 ```*violin*```
 ```*viola*```
 ```*cello*```
@@ -19,7 +20,9 @@ Current Preset instruments:
 
 ### Try out the chord generator:
 
-Current chord qualities: ```'("minor" "major" "dim" "aug" "min7" "maj7" "half-dim7" "dim7")```
+#### Current chord qualities: 
+
+```'("minor" "major" "dim" "aug" "min7" "maj7" "half-dim7" "dim7")```
 
 ```(fretted-full-chords instrument chord)``` returns a voicing of a chord, using all chord tones and all strings on the instrument:
 
@@ -28,7 +31,7 @@ Current chord qualities: ```'("minor" "major" "dim" "aug" "min7" "maj7" "half-di
 ((2 0 0 2) (2 0 5 2) (2 4 5 2) (2 4 5 5) (2 7 5 2) (7 0 0 2) (7 4 0 2)
  (7 4 0 5) (7 4 5 5) (7 7 0 2) (7 7 5 2))
 
-```OTAKAR> (fretted-full-chords *guitar* (make-chord 4 "major")) ; E major```
+```(fretted-full-chords *guitar* (make-chord 4 "major")) ; E major```
 
 ((0 2 2 1 0 0) (0 2 2 1 0 4) (0 2 2 4 0 4) (4 2 2 1 0 0) (4 2 2 1 0 4)
  (4 2 2 4 0 0) (4 2 2 4 0 4))
@@ -44,7 +47,7 @@ Current chord qualities: ```'("minor" "major" "dim" "aug" "min7" "maj7" "half-di
 
 18
 
-```(instrument-symps *violin* 220.0) ; returns all sympathetic freqs by string```
+```(instrument-symps *violin* 220.0)``` returns all sympathetic freqs by string:
 
 ((1764.0) (880.80005 1761.6 2642.4001 3523.2004)
  (440.0 880.0 1320.0 1760.0 2200.0 2640.0 3080.0 3520.0)
