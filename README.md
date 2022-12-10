@@ -1,18 +1,19 @@
 # Holberg
 ## A Suite for Musical Composition and Analysis
 
-Holberg is a statically typed atomic music theory library, built using Pitch-Class Set Theory.
+Holberg is a statically typed, atomic music theory library, built using Pitch-Class Set Theory.
 
-In addition to its general purpose theory functions, Holberg currently features two specialized libraries (with others being prepared offstage):\
+In addition to its general purpose theory functions, Holberg currently features two specialized libraries (with others being prepared offstage):
 
-##### [Seria](https://www.github.com/Izaakwltn/holberg/tree/main/seria)
-a library for generating and analyzing twelve tone serial tone-rows and tone-matrices.\
-##### [otakar](https://www.github.com/Izaakwltn/holberg/tree/main/otakar)
+#### [Seria](https://www.github.com/Izaakwltn/holberg/tree/main/seria)
+a library for generating and analyzing twelve tone serial tone-rows and tone-matrices.
+
+#### [otakar](https://www.github.com/Izaakwltn/holberg/tree/main/otakar)
 a library for working with stringed instruments, currently with chord generation and resonance analysis functions.
 
 ## A Brief Introduction to Holberg's theory system
 ### Pitch Classes and Pitch Class Sets
-The twelve tones of the western traditional system are processed using digits 0-11. C is 0, C# is 1... B is 11. From there, all pitch-class operations can be handled as modular arithmetic.
+The twelve tones of the western traditional system are processed using digits 0-11: C is 0, C# is 1... B is 11. From there, all pitch-class operations can be handled as modular arithmetic.
 
 ```
 HOLBERG> (typep 8 'pitch-class)
@@ -91,7 +92,8 @@ HOLBERG> (relative-key test-key)
 HOLBERG> (parallel-key test-key)
 #<KEY 9-natural-minor, (9 11 0 2 4 5 7)> ; A minor
 ```
-The current available key qualities are: "major" "ionian" "dorian" "phrygian" "lydian" "mixolydian" "aeolian" "natural-minor" "melodic-minor" "harmonic-minor" "locrian" "major-pentatonic" "minor-pentatonic" "whole-tone" and "chromatic".\
+The current available key qualities are: "major" "ionian" "dorian" "phrygian" "lydian" "mixolydian" "aeolian" "natural-minor" "melodic-minor" "harmonic-minor" "locrian" "major-pentatonic" "minor-pentatonic" "whole-tone" and "chromatic".
+
 
 ### Scales
 Scales are generated with 3 pieces of information: the key, the first-pitch, and the last-pitch. The first and last pitches can be out of bounds, as long as all scale notes you're seeking are within. From here, holberg generates a collection for the scale containing all relevant pitches. 
