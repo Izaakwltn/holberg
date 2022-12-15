@@ -30,6 +30,20 @@
 		   (10 (A# Bb))
 		   (11 (B Cb))))
 
+(defvar string-name-key '((0 ("C" "B#" "Db"))
+		          (1 ("C#" "Db"))                         
+		          (2 ("D"))
+                          
+	           (3 ("Eb" "D#"))
+         	   (4 ("E" "Fb"))
+		   (5 ("F" "E#"))
+		   (6 ("F#" "Gb"))
+	           (7 ("G"))
+        	   (8 ("G#" "Ab"))
+		   (9 ("A"))
+		   (10 ("A#" "Bb"))
+		   (11 ("B" "Cb"))))
+
 (declaim (ftype (function (symbol) pitch-class) name-number))
 (defun name-number (name)
   "Returns the pitch-class for a given pitch-name"
@@ -43,6 +57,12 @@
   "Returns a pitch-name for a given pitch-class, may be enharmonically awkward."
   (check-type n pitch-class)
   (first (second (assoc n name-key))))
+
+(declaim (ftype (function (pitch-class) string) number-string))
+(defun number-string (n)
+  "Returns the ptich-name as a string for a given pitch-class"
+  (check-type n pitch-class)
+  (first (second (assoc n string-name-key :test #'equal))))
 
 (declaim (ftype (function (pc-set) list) name-set))
 (defun name-set (pc-set)

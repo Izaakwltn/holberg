@@ -29,7 +29,7 @@
   (member n (mapcar #'first *key-list*) :test #'equal))
 
 (deftype key-quality ()
-  `(satisfies chord-quality-p))
+  `(satisfies key-quality-p))
 
 ;;; searching for a quality's pc-set
 
@@ -69,7 +69,6 @@
   (make-instance 'key :tonic tonic
                       :quality quality
                       :pc-set (set-transpose (key-set quality) tonic)))
-
 ;;;
 
 (declaim (ftype (function (key integer) key) key-transpose))
