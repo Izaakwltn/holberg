@@ -63,7 +63,7 @@
   (" " nil))
 
 (defun lily-lex (lily-string)
-  "Breaks down a formula string into tokens."
+  "Breaks down a lilypond string into tokens."
   (loop :with lexer := (lily-lexer lily-string)
         :for tok := (funcall lexer)
 	:while tok
