@@ -1,2 +1,15 @@
+# Ignore all
+**
+
+# Unignore files with extensions
+!*.*
+
+# Unignore directories
+!/**/
+
+# Unignore Makefile and Dockerfile
+!Makefile
+!Dockerfile
+
+# Ignore pesky, pesky tildes
 *~
-./*
