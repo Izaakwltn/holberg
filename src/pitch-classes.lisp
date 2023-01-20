@@ -50,6 +50,7 @@
   (cond ((equal pclow pchigh) interval)
 	(t (pc-interval-backend (pc-incr pclow) pchigh (1+ interval)))))
 
+;;; this shows the ordinal interval, also make min/max interval functions
 (declaim (ftype (function (pitch-class pitch-class) integer) pc-interval))
 (defun pc-interval (pc1 pc2)
   "Finds the interval in between two pitch-classes"

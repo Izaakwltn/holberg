@@ -63,6 +63,8 @@
                    (lower-bound string-freqs)
                    (upper-bound string-freqs)))
 
+;;;
+
 ;;; Instrument reach and frets
 (declaim (ftype (function (pitch integer) collection) reachable-notes))
 (defun reachable-notes (string-pitch reach-steps)
@@ -71,10 +73,10 @@
       (list string-pitch)
       (cons string-pitch (reachable-notes (pitch-incr string-pitch) (1- reach-steps)))))
 
-(declaim (ftype (function (pitch pitch) integer) find-fret))
-(defun find-fret (string-pitch note-pitch)
-  "Finds the lowest possible fret number for a pitch class on a string"
-  (pitch-interval string-pitch note-pitch))
+;(declaim (ftype (function (pitch pitch) integer) find-fret))
+;(defun find-fret (string-pitch note-pitch)
+;  "Finds the lowest possible fret number for a pitch class on a string"
+ ; (pitch-interval string-pitch note-pitch))
 
 ;;; Pitch class on string, for carrying fret data
 
