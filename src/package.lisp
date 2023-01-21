@@ -68,9 +68,16 @@
            #:make-pc-set
            #:collect-set)
 
+  ;;; keys.lisp
+  (:export #:make-key
+           #:key-transpose
+           #:relative-key
+           #:parallel-key)
+  
   ;;; scales.lisp
   (:export #:scale ;class
 	   #:populate-scale
+           #:scale-pitches
            #:make-scale
 	   #:quick-scale
            #:scale-transpose

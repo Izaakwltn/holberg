@@ -63,7 +63,12 @@
                    (lower-bound string-freqs)
                    (upper-bound string-freqs)))
 
-;;;
+;;; Translating string frequencies to pitches:
+(defmethod string-pitches ((instrument instrument))
+  (mapcar #'freq-to-pitch (strings instrument)))
+
+(defmethod string-pcs ((instrument instrument))
+  (mapcar #'holberg::pc (string-pitches instrument)))
 
 ;;; Instrument reach and frets
 (declaim (ftype (function (pitch integer) collection) reachable-notes))
@@ -102,29 +107,44 @@
                                   :note-pitch note-pitch
                                   :fret (find-fret string-pitch note-pitch)))
 
-;;; Strings
 
-(defmethod string-pitches ((instrument instrument))
-  (mapcar #'freq-to-pitch (strings instrument)))
-
-(defmethod string-pcs ((instrument instrument))
-  (mapcar #'holberg::pc (string-pitches instrument)))
+;;; I could potentially make string values variable:
 
 ;;; Predefined standard instruments:
 
-(defvar *violin-strings* '(196.0 293.6 440.0 660.0))
+;;; Instruments can be made with a simple list of frequencies:
+;;; '(196 293.6 440.0 660.0)
+;;; or as I've done below, relatively to A4:
+
+(defvar *violin-strings* (list (standard-string -14)
+                               (standard-string -7)
+                               *standard-a*
+                               (standard-string 7)))
 
 (defvar *violin* (quick-instrument "violin" *violin-strings* 7))
 
-(defvar *ukulele-strings* '(392.0 261.63 329.63 440.0))
+(defvar *ukulele-strings* (list (standard-string -2)
+                                (standard-string -9)
+                                (standard-string -5)
+                                *standard-a*))
 
 (defvar *ukulele* (quick-instrument "ukulele" *ukulele-strings* 7))
 
-(defvar *guitar-strings* '(82.41 110.0 146.83 196.0 246.94 329.63))
+(defvar *guitar-strings* (list (standard-string -29)
+                               (standard-string -24)
+                               (standard-string -19)
+                               (standard-string -14)
+                               (standard-string -10)
+                               (standard-string -5)))
+                                        ;'(82.41 110.0 146.83 196.0 246.94 329.63))
 
 (defvar *guitar* (quick-instrument "guitar" *guitar-strings* 4))
 
-(defvar *viola-strings* (mapcar #'pitch-to-freq (list (make-pitch 0 3) (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4))))
+(defvar *viola-strings* (list (standard-string -21)
+                              (standard-string -14)
+                              (standard-string -7)
+                              *standard-a*))
+;(defvar *viola-strings* (mapcar #'pitch-to-freq (list (make-pitch 0 3) (make-pitch 7 3) (make-pitch 2 4) (make-pitch 9 4))))
 
 (defvar *viola* (quick-instrument "viola" *viola-strings* 7))
 

@@ -9,6 +9,7 @@
 ;;;
 ;;;
 
+;;; really should be (in-package :lispypond)
 
 
 (defvar *lilypond-notes* '((0 ("c" "bis"))

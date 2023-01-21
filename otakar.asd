@@ -12,6 +12,9 @@
   :components ((:module "otakar"
                 :serial t
                 :components ((:file "package")
+                             (:file "strings")
+                             (:file "frets")
+                             (:file "positions")
                              (:file "instruments")
 	                     (:file "chords")
 	                     (:file "chord-generator")
