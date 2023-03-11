@@ -1,6 +1,6 @@
 ;;;; otakar.asd
 ;;;;
-;;;;
+;;;; Copyright Izaak Walton (C) 2022-2023
 
 (asdf:defsystem #:otakar
   :version "0.0.1"

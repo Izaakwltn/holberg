@@ -35,9 +35,10 @@
 (deftype finger-number ()
   `(satisfies finger-number-p))
 
-(defstruct finger
+(defstruct fingered-pitch
   (num 1 :type finger-number)
-  (position-frame (make-position-frame) :type position-frame))
+  (position-frame (make-position-frame) :type position-frame)
+  (pitch (make-pitch 0 0) :type pitch))
 
 (declaim (ftype (function (instrument pitch) list) lowest-starting-fret))
 (defun lowest-starting-fret (instrument pitch)
@@ -57,6 +58,7 @@
           :do (setq highest-fret (list s (find-fret s pitch)))
         :finally (return highest-fret)))
 
+(declaim (ftype (function (instrument pitch) pitch) next-string))
 (defun next-string (instrument pitch)
   "Returns the next highest string from a pitch."
   (loop :with next-string := (make-pitch 9 9)
