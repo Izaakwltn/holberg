@@ -4,4 +4,4 @@
 
 (defpackage #:holberg-app-suite
   (:documentation "Webapps for Holberg music tools")
-  (:use #:cl #:holberg #:otakar #:seria))
+  (:use #:cl #:holberg #:otakar #:seria #:spinneret))

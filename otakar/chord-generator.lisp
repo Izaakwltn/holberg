@@ -60,3 +60,57 @@
   (reverse (mapcar #'(lambda (c)
                        (mapcar #'fret (posl c)))
                    (full-chords instrument chord))))
+
+;;; printing chords
+
+;;;ideal format:
+;;;E--3--
+;;;A--2--
+;;;D--0--
+;;;G--0--
+
+(defun print-string (string-name fret-number)
+  (format nil "|~a----~d----|" string-name fret-number))
+  
+(defmethod print-chord ((c instr-chord))
+  (loop :with chord-print := ""
+        :for i :in (mapcar #'(lambda (x)
+                               (holberg::number-string
+                                (holberg::pc (freq-to-pitch x))))
+                           (strings (instrument c)))
+        :for j :in (mapcar #'fret (posl c))
+        :do (setq chord-print (format nil "~a~%~a" (print-string i j) chord-print))
+        :finally (return (format nil "~%~a" chord-print))))
+;;(format nil "~a~%~a" (chord c) chord-print))))
+
+(defun collect-string-frets (instr-chord-list)
+  (loop :for s :from 0 :to (1- (length (strings (instrument (first instr-chord-list)))))
+        :collect (loop :for c :in instr-chord-list
+                       :collect (fret (nth s (posl c))))))
+
+(defun format-chord-string-row (string-frets)
+  (format nil "|~{----~a----|~}" string-frets))
+
+(defun print-chords (instr-chord-list) ;optional row-limit
+  (loop :with row-limit := 4
+        :with rows := nil
+        :with current-row := nil
+        
+        :for s :in (collect-string-frets instr-chord-list)
+        :do (loop :for i :from 0 :to (1- (length s))
+                  :do (if (zerop row-limit)
+                          (progn (setq rows (cons (format-chord-string-row current-row) rows))
+                                 (setq current-row nil)
+                                 (setq row-limit 4))
+                          (progn (setq current-row (cons (nth i s) current-row))
+                                 (setq row-limit (1- row-limit))
+                                 (format t "~A" row-limit)))
+                    :finally (progn ;(setq current-row (cons (nth i s) current-row))
+                               (setq rows (cons (format-chord-string-row current-row) rows))
+                               (setq row-limit 4)))
+            :finally (return rows)))
+                                  
+                     
+                               
+        
+  
