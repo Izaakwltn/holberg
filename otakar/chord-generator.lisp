@@ -91,24 +91,43 @@
 (defun format-chord-string-row (string-frets)
   (format nil "|~{----~a----|~}" string-frets))
 
-(defun print-chords (instr-chord-list) ;optional row-limit
-  (loop :with row-limit := 4
-        :with rows := nil
+(defun collect-rows (string-fret-list)
+  (reverse (loop :with row-limit := 4
         :with current-row := nil
+        :with rows := nil
         
-        :for s :in (collect-string-frets instr-chord-list)
-        :do (loop :for i :from 0 :to (1- (length s))
-                  :do (if (zerop row-limit)
-                          (progn (setq rows (cons (format-chord-string-row current-row) rows))
-                                 (setq current-row nil)
-                                 (setq row-limit 4))
-                          (progn (setq current-row (cons (nth i s) current-row))
-                                 (setq row-limit (1- row-limit))
-                                 (format t "~A" row-limit)))
-                    :finally (progn ;(setq current-row (cons (nth i s) current-row))
-                               (setq rows (cons (format-chord-string-row current-row) rows))
-                               (setq row-limit 4)))
-            :finally (return rows)))
+        :for i :from 0 :to (1- (length string-fret-list))
+        :do (if (zerop row-limit)
+                (progn (setq rows (cons "-*-*-*-*-*-*-*-*" (cons (format-chord-string-row current-row) rows)))
+                       (setq current-row nil)
+                       (setq row-limit 4))
+                (progn (setq current-row (cons (nth i string-fret-list) current-row))
+                       (setq row-limit (1- row-limit))
+                       (format t "~A" row-limit)))
+        :finally (progn (setq rows (cons (format-chord-string-row current-row) rows))
+                        (return rows)))))
+
+(defun sort-rows (string-row-list)
+  (loop :with sorted := nil
+        :for i :from 0 :to (1- (length (first string-row-list)))
+        :do (mapcar #'(lambda (x)
+                        (setq sorted (cons (nth i x) sorted)))
+                    string-row-list)
+        :finally (return sorted)))
+                 
+  
+(defun print-chords (instr-chord-list) ;optional row-limit
+  (sort-rows (loop ;:with rows := 
+                   :for s :in (collect-string-frets instr-chord-list)
+                   :for sn :in (mapcar #'(lambda (x)
+                                           (holberg::number-string (holberg::pc (string-pitch x))))
+                                       (posl (first instr-chord-list)))
+                   :collect (mapcar #'(lambda (x)
+                                        (format nil "~a~a" sn x))
+                                    (collect-rows s)))))
+
+
+
                                   
                      
                                

@@ -23,7 +23,7 @@
       (cl-bootstrap:bs-navbar (:brand "Holberg")
         (cl-bootstrap:bs-navbar-nav ()
           (cl-bootstrap:bs-nav-li (:href "/resonance.html") "Resonance Calculator")
-          (cl-bootstrap:bs-nav-li (:href "/chords.html") "[Chord Generator]")
+          (cl-bootstrap:bs-nav-li (:href "/chord-generator.html") "Chord Generator")
           (cl-bootstrap:bs-nav-li (:href "/romans.html") "[Roman Numerals]")
           (cl-bootstrap:bs-nav-li (:href "/serial-matrix.html") "[Tone Matrix Generator]")))
       (cl-bootstrap:bs-container ()

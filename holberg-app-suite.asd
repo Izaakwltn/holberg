@@ -21,5 +21,6 @@
                              (:module "www"
                               :serial t
                               :components ((:file "home")
-                                           (:file "resonance-input")))))))
+                                           (:file "resonance-input")
+                                           (:file "chord-generator")))))))
                              

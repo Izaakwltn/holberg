@@ -15,7 +15,7 @@
 (defvar *root-options* (loop :for i :from 0 :to 11
                              :collect (list (holberg::number-string i) i)))
 
-(defvar *quality-options* (mapcar #'first holberG::*chord-qualities*))
+(defvar *quality-options* (mapcar #'first holberg::*chord-qualities*))
 
 (defun chord-generator ()
   (with-page (:title "Chord Generator")
@@ -44,9 +44,10 @@
 (hunchentoot::define-easy-handler (generate-chords :uri "/generate-chords")
     (instrument-option root-option quality-option)
   (setf (hunchentoot:content-type*) "text/html")
-  (let ((chords (otakar::possible-chords
+  (let ((chords (otakar::print-chords
+                 (otakar::possible-chords
                  (eval (second (assoc instrument-option *instrument-options* :test #'string-equal)))
-                 (holberg::make-chord (parse-integer root-option) quality-option))))
+                 (holberg::make-chord (parse-integer root-option) quality-option)))))
   (with-page (:title "Chord Generator")
     (:header
      (:h1 "Chord Generator")
@@ -57,4 +58,4 @@
     (spinneret:with-html
       (:section
        (loop :for c :in chords
-             :do (:p (otakar::print-chord c))))))))
+             :do (:p c)))))))

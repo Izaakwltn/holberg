@@ -16,15 +16,15 @@
                               (holberg::scale-pitches
                                (quick-scale (holberg::make-key 0 "chromatic") 0 7))))
 
-(defvar *instrument-options* '("violin" holberg::*violin*
-                               "viola"  holberg::*viola*
-                               "cello"  holberg::*cello*
-                               "guitar" holberg::*guitar*
-                               "ukulele" holberg::*ukulele*))
+;(defvar *instrument-options* '("violin" holberg::*violin*
+ ;                              "viola"  holberg::*viola*
+  ;                             "cello"  holberg::*cello*
+   ;                            "guitar" holberg::*guitar*
+    ;                           "ukulele" holberg::*ukulele*))
 
-(defvar *root-options* (mapcar #'number-name '(0 1 2 3 4 5 6 7 8 9 10 11)))
+;(defvar *root-options* (mapcar #'number-name '(0 1 2 3 4 5 6 7 8 9 10 11)))
 
-(defvar *key-quality-options* (mapcar #'first holberg::*key-list*))
+;(defvar *key-quality-options* (mapcar #'first holberg::*key-list*))
 
 (defun resonance ()
   (with-page (:title "Resonance Calculator")
