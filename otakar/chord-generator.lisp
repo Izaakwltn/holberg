@@ -85,33 +85,36 @@
 
 (defun collect-string-frets (instr-chord-list)
   (loop :for s :from 0 :to (1- (length (strings (instrument (first instr-chord-list)))))
-        :collect (loop :for c :in instr-chord-list
-                       :collect (fret (nth s (posl c))))))
+        :collect (reverse (loop :for c :in instr-chord-list
+                       :collect (fret (nth s (posl c)))))))
 
 (defun format-chord-string-row (string-frets)
-  (format nil "|~{----~a----|~}" string-frets))
+  (format nil "|~{----------~a----------|~}" string-frets))
 
 (defun collect-rows (string-fret-list)
-  (reverse (loop :with row-limit := 4
+   (loop :with row-limit := 5
         :with current-row := nil
         :with rows := nil
         
         :for i :from 0 :to (1- (length string-fret-list))
         :do (if (zerop row-limit)
-                (progn (setq rows (cons "-*-*-*-*-*-*-*-*" (cons (format-chord-string-row current-row) rows)))
+                (progn (setq rows (cons "-*-*-*-*-*-*-*" (cons (format-chord-string-row current-row) rows)))
                        (setq current-row nil)
-                       (setq row-limit 4))
+                       (setq row-limit 5))
                 (progn (setq current-row (cons (nth i string-fret-list) current-row))
                        (setq row-limit (1- row-limit))
                        (format t "~A" row-limit)))
         :finally (progn (setq rows (cons (format-chord-string-row current-row) rows))
-                        (return rows)))))
+                        (return rows))))
 
 (defun sort-rows (string-row-list)
   (loop :with sorted := nil
+        :with line-break := nil
         :for i :from 0 :to (1- (length (first string-row-list)))
         :do (mapcar #'(lambda (x)
-                        (setq sorted (cons (nth i x) sorted)))
+                       ; (if (string-equal (nth i x) "break")
+                        ;    (setq line-break 't)
+                            (setq sorted (cons (nth i x) sorted)))
                     string-row-list)
         :finally (return sorted)))
                  
@@ -123,7 +126,11 @@
                                            (holberg::number-string (holberg::pc (string-pitch x))))
                                        (posl (first instr-chord-list)))
                    :collect (mapcar #'(lambda (x)
-                                        (format nil "~a~a" sn x))
+                                        (cond ((< (length x) 2)
+                                               "")
+                                              ((string-equal x "-*-*-*-*-*-*-*")
+                                              x)
+                                              (t (format nil "~a~a" sn x))))
                                     (collect-rows s)))))
 
 

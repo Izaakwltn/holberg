@@ -45,7 +45,7 @@
     (instrument-option root-option quality-option)
   (setf (hunchentoot:content-type*) "text/html")
   (let ((chords (otakar::print-chords
-                 (otakar::possible-chords
+                 (otakar::full-chords
                  (eval (second (assoc instrument-option *instrument-options* :test #'string-equal)))
                  (holberg::make-chord (parse-integer root-option) quality-option)))))
   (with-page (:title "Chord Generator")
