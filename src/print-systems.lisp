@@ -64,6 +64,14 @@
   (check-type n pitch-class)
   (first (second (assoc n string-name-key :test #'equal))))
 
+(declaim (ftype (function (string) pitch-class) string-number))
+(defun string-number (name)
+  "Returns the pitch-class for a given pitch-name"
+  (check-type name string)
+  (first (find-if #'(lambda (i)
+	       (member name (second i) :test #'string-equal))
+		  string-name-key)))
+
 (declaim (ftype (function (pc-set) list) name-set))
 (defun name-set (pc-set)
   "Returns a pc-set converted to standard pitch names."
