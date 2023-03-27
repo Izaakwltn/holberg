@@ -30,7 +30,7 @@
 		   ("bVII"  (10 2 5))
 		   ("vii"   (11 2 6))
 		   ("VII"   (11 3 6))
-		   ("viidim" (11 2 5)))) ;add 7 chords, aug dim for each
+		   ("viidim" (11 2 5)))) ;add 7 chords, aug dim for each, 6 chords
 
 (defun roman-p (x)
   (member x (mapcar #'first *romans*) :test #'equal))
@@ -156,7 +156,11 @@
 	      (make-chord (string-number (first c))
 			  (second c)))
 	  parsed-chord-list))
+
 (defun process-chord-input (chord-input-string) ;example: "G Gmajor Cmajor Dmajor"
   (let ((input (parse-chords-input chord-input-string)))
-    (chord-roman-list (string-number (first input))
+    (chord-roman-list (string-number (first (first input)))
 		      (convert-chords (rest input)))))
+
+(defun print-romans (roman-list)
+  (format nil "~{~a ~}" roman-list))

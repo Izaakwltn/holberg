@@ -24,12 +24,14 @@
         (cl-bootstrap:bs-navbar-nav ()
           (cl-bootstrap:bs-nav-li (:href "/resonance.html") "Resonance Calculator")
           (cl-bootstrap:bs-nav-li (:href "/chord-generator.html") "Chord Generator")
-          (cl-bootstrap:bs-nav-li (:href "/romans.html") "[Roman Numerals]")
+          (cl-bootstrap:bs-nav-li (:href "/roman-tools.html") "Roman Numeral Tools")
           (cl-bootstrap:bs-nav-li (:href "/serial-matrix.html") "[Tone Matrix Generator]")))
       (cl-bootstrap:bs-container ()
         (cl-bootstrap:bs-row
           (cl-bootstrap:bs-col-md ()
             ,@body)
-     (:footer "Holberg App Suite - Copyright (c) 2022 "
+          (:br)
+          (:footer 
+                   "Holberg App Suite - Copyright (c) 2022-2023 "
               (:a :href "https://www.github.com/Izaakwltn/holberg"
                   "Written using Common Lisp")))))))
