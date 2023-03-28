@@ -21,6 +21,8 @@ RUN true
 
 EXPOSE 4242
 
+# RUN make
+
 # RUN ./launch-suite
 
 ENTRYPOINT ["./launch-suite"]
