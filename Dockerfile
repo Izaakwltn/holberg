@@ -5,18 +5,19 @@ ARG QUICKLISP_ADD_TO_INIT_FILE=true
 
 WORKDIR /holberg
 
-# copy holberg-app-suite.asd .
-# copy /holberg-app-suite .
-# copy holberg.asd .
-# copy /src .
-# copy otakar.asd .
-#copy /otakar .
-# copy seria.asd .
-# copy /seria .
-# copy holberg.asd .
-# copy Makefile .
-# RUN true
+COPY holberg-app-suite.asd .
+COPY /holberg-app-suite .
+COPY holberg.asd .
+COPY /src .
+COPY otakar.asd .
+COPY /otakar .
+COPY seria.asd .
+COPY /seria .
+COPY holberg.asd .
+COPY Makefile .
+RUN true
 COPY launch-suite .
+RUN true
 
 EXPOSE 4242
 

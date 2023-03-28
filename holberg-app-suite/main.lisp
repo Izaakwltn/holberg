@@ -8,7 +8,7 @@
   "Executable entrypoint"
   (handler-case
       (progn
-        (launch)
+        (start)
         (bt:join-thread
          (find-if (lambda (th)
                     (search "hunchentoot" (bt:thread-name th)))
