@@ -70,7 +70,7 @@
 ;;;G--0--
 
 (defun print-string (string-name fret-number)
-  (format nil "|~a----~d----|" string-name fret-number))
+  (format nil "~a----~d----" string-name fret-number))
   
 (defmethod print-chord ((c instr-chord))
   (loop :with chord-print := ""
@@ -89,7 +89,7 @@
                        :collect (fret (nth s (posl c)))))))
 
 (defun format-chord-string-row (string-frets)
-  (format nil "|~{----------~a----------|~}" string-frets))
+  (format nil "~{----------~a----------~}" string-frets))
 
 (defun collect-rows (string-fret-list)
    (loop :with row-limit := 5

@@ -10,22 +10,23 @@
 ;;;
 
 ;;; really should be (in-package :lispypond)
+(defpackage #:lispypond
+  (:documentation "Lilypond to Holberg compiler")
+  (:use #:cl #:holberg))
 
+(in-package #:lispypond)
 
-(defvar *lilypond-notes* '((0 ("c" "bis"))
-                           (1 ("cis" "des"))
-                           (2 ("d"))
-                           (3 ("dis" "ees"))
-                           (4 ("e" "fes"))
-                           (5 ("f" "eis"))
-                           (6 ("fis" "ges"))
-                           (7 ("g"))
-                           (8 ("gis" "aes"))
-                           (9 ("a"))
-                           (10 ("ais" "bes"))
-                           (11 ("b" "ces"))))
+(defvar *note-names* '((0 "c")
+                       (2 "d")
+                       (4 "e")
+                       (5 "f")
+                       (7 "g")
+                       (9 "a")
+                       (11 "b")))
 
-(defvar *possible-lilypond-notes* (reduce #'append (mapcar #'second *lilypond-notes*)))
+(defvar *accidentals* '("is""es" )) ; maybe unecessary
+
+(defvar *possible-lilypond-notes* (mapcar #'second *note-names*))
 
 (defun lilypond-note-name-p (string)
   (member string *possible-lilypond-notes* :test #'equal))
@@ -34,13 +35,6 @@
   `(satisfies lilypond-note-name-p))
 
 ;(defparameter *lilypond-symbols* '(:clef "\\clef"))
-
-
-
-(defun lilypond-pc (lily-name)
-  (first (find-if #'(lambda (l)
-               (member lily-name (second l) :test #'equal))
-		  *lilypond-notes*)))
 
 (ql:quickload :alexa)
 
@@ -52,16 +46,150 @@
 
 ;(defun lilypond-text (string) ;avoids escaping backslashes
 
+;;; for converting to holberg data, I don't need a full lexer- but for processing and returning back to Lilypond I would need pretty much everything.
+
+
 (alexa:define-string-lexer lily-lexer
   ()
-  ("[A-Za-z][a-z]*" (if (typep $@ 'lilypond-note-name)
-                     (return (tok :note $@))
-                     (return (tok :symbol $@))))
+  ;("%.*\\\n" (return (tok :comment $@)))
+  ("%\\{.*%\\}" (return (tok :comment $@))) ; multiline comment
+  ("%[^\\{][^\\\n]*" (return (tok :comment $@))) ;single line comment (troubleshoot)
+  ("[abcdefg][is|es]*[,|']*[0-9]*" (return (tok :note $@)))
+  ("\\\\\[A-Za-z]*" (return (tok :keyword (subseq $@ 1)))) ;worth including value?
+  ;("'" (return (tok :octave-up)))
+  ;("," (return (tok :octave-down)))
+;  ("\\(" (return (tok :slur-open)))
+ ; ("\\)" (return (tok :slur-close)))
+  ("\\|" (return (tok :bar-pipe)))
+  ("\\d+/\\d+" (return (tok :meter $@)))
   ("\\d+" (return (tok :number (parse-integer $@))))
   ("\\{" (return (tok :left-curly)))
   ("\\}" (return (tok :right-curly)))
+  ("[A-Za-z0-9][A-Za-z0-9]*" (return (tok :value $@)))
+
+                                        ;("[a-g]" (return (tok :pc (princ $@))))
+                                        ;("\\\".\\\"" (return (tok :string)))
+  ;("\\\n" (return (tok :newline)))
+  ("\\s+" nil))
+
+(defun lily-lex (lily-string)
+  "Breaks down a lilypond string into tokens."
+  (loop :with lexer := (lily-lexer lily-string)
+        :for tok := (funcall lexer)
+	:while tok
+	:collect tok))
+
+;;; pitch entry-modes
+
+;;; absolute, every note has octave specified with "'" or ","
+;;; fixed, absolute but in relation to a fixed pitch
+;;; relative- the relationship to the previous note is less than a fifth
+
+(defvar *entry-mode* ':absolute) ; options: absolute, fixed, relative
+(defvar *entry-modes* '(:absolute :fixed :relative))
+
+(defun set-entry-mode (entry-mode)
+  (setq *entry-mode* entry-mode))
+
+(defun reset-entry-mode ()
+  (set-entry-mode ':absolute))
+
+(defvar *current-duration* 4)
+
+(defun parse-lilypond-note (lilypond-note-string)
+  (loop :with pc := nil
+        :with octaves-change := 0
+        
+        :for i :from 1 :to (length lilypond-note-string)
+        :do (let ((s (subseq lilypond-note-string (1- i) i)))
+              (cond ((lilypond-note-name-p s)
+                     (setq pc (holberg::string-number s)))
+                    ((string-equal s ",")
+                     (setq octaves-change (1- octaves-change)))
+                    ((string-equal s "'")
+                     (setq octaves-change (1+ octaves-change)))
+                    (t (setq *current-duration* (parse-integer s)))))
+            :finally (return (list pc octaves-change))))
+                     
+(defun absolute-pitch (lilypond-note-string)
+  "Makes a holberg note given a lilypond note string"
+  (let ((s (parse-lilypond-note lilypond-note-string)))
+    (holberg:make-pitch (first s)
+                         (+ 3 (second s)))))
+
+(defun absolute-note (lilypond-note-string)
+  "Makes a holberg note given a lilypond note string"
+  (holberg:make-note
+   (absolute-pitch lilypond-note-string)
+   *current-duration*))
+
+;;; fixed pitch selects a pitch and all octave markings are in relation
+(defvar *fixed-pitch* (holberg:make-pitch 0 3))
+
+;;; when processing input, keyword fixed should set the next element (a note hopefully) to *fixed-pitch*
+(defun fixed-note (lilypond-note-string)
+  (let ((s (parse-lilypond-note lilypond-note-string)))
+    (holberg:make-note
+     (holberg:make-pitch (first s)
+                         (+ (holberg::octave *fixed-pitch*) (second s))) 
+     *current-duration*))) ; it might need to be more complicated than just the octave
+
+
+
+(defvar *previous-pitch* nil) ; for use with relative octave entry 
+
+
+
+
+;;; (defun process-keyword (keyword)
+;;;   (cons ((member keyword *entry-modes*)
+;;;          (set-entry-mode ':absolute)
+
+(defvar *current-duration* 0)
+;;; converting lilypond notes to holberg notes
+(defun lilypond-holberg-note 
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;(defvar *lilypond-notes* '((0 ("c" "bis"))
+ ;                          (1 ("cis" "des"))
+  ;                         (2 ("d"))
+   ;                        (3 ("dis" "ees"))
+    ;                       (4 ("e" "fes"))
+     ;                      (5 ("f" "eis"))
+      ;                     (6 ("fis" "ges"))
+       ;;;                    (7 ("g"))
+          ;                 (8 ("gis" "aes"))
+           ;                (9 ("a"))
+            ;               (10 ("ais" "bes"))
+             ;              (11 ("b" "ces"))))
+;(defun lilypond-pc (lily-name)
+ ; (first (find-if #'(lambda (l)
+  ;             (member lily-name (second l) :test #'equal))
+;		  *lilypond-notes*)))
+
+;(ql:quickload :alexa)
+
+;(deftype token ()
+ ; '(cons keyword t))
+
+;(defun tok (type &optional val)
+ ; (cons type val))
+
+;(defun lilypond-text (string) ;avoids escaping backslashes
+
+;(alexa:define-string-lexer lily-lexer
+ ; ()
+  ;("[A-Za-z][a-z]*" (if (typep $@ 'lilypond-note-name)
+   ;                  (return (tok :note $@))
+    ;                 (return (tok :symbol $@))))
+ ; ("\\d+" (return (tok :number (parse-integer $@))))
+  ;("\\{" (return (tok :left-curly)))
+ ; ("\\}" (return (tok :right-curly)))
   ;("[a-g]" (return (tok :pc (princ $@))))
-  (" " nil))
+ ; (" " nil))
 
 (defun lily-lex (lily-string)
   "Breaks down a lilypond string into tokens."

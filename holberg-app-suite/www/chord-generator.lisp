@@ -6,17 +6,6 @@
 
 ;;; move these to a separate file for use with resonance, chords, more
 
-(defvar *instrument-options* '(("violin" otakar::*violin*)
-                              ("viola" otakar::*viola*)
-                              ("cello" otakar::*cello*)
-                              ("ukulele" otakar::*ukulele*)
-                               ("guitar" otakar::*guitar*)))
-
-(defvar *root-options* (loop :for i :from 0 :to 11
-                             :collect (list (holberg::number-string i) i)))
-
-(defvar *quality-options* (mapcar #'first holberg::*chord-qualities*))
-
 (defun chord-generator ()
   (with-page (:title "Chord Generator")
     (:header
@@ -34,7 +23,7 @@
               (loop :for i :in  holberg-app-suite::*root-options*
                     :do (:option :value (second i) (format nil "~a" (first i)))))
             (:select :name "quality-option" :id "generate-chords"
-              (loop :for i :in holberg-app-suite::*quality-options*
+              (loop :for i :in holberg-app-suite::*chord-quality-options*
                     :do (:option :value i (format nil "~a" i))))
             (:input :type "submit" :value "Generate Chords" :class "button"))))))
 

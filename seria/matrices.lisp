@@ -30,13 +30,18 @@
 	obj
       (format stream "~%Original: ~a~%Matrix:~%~{~a~%~}" original-row matrix))))
 
+(defun tone-interval (tone1 tone2)
+  (cond ((> 0 (- tone2 tone1))
+         (+ 12 (- tone2 tone1)))
+        (t (- tone2 tone1))))
+
 (defun y-order (original-row)
   "Generates the y-axis order from the original row of a tone matrix"
   (mapcar #'(lambda (n)
 	      (if (zerop n) 0
 		  (- 12 n)))
 	  (loop :for i :in original-row
-		:collect (holberg::pc-interval (first original-row) i))))
+		:collect (tone-interval (first original-row) i))))
 
 (defun make-matrix (original-row)
   (check-type original-row row)

@@ -21,7 +21,9 @@
                              (:module "www"
                               :serial t
                               :components ((:file "home")
+                                           (:file "options")
                                            (:file "resonance-input")
                                            (:file "chord-generator")
-                                           (:file "roman-tools")))))))
+                                           (:file "roman-tools")
+                                           (:file "matrix-generator")))))))
                              
