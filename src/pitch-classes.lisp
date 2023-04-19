@@ -56,4 +56,12 @@
   "Finds the interval in between two pitch-classes"
   (check-type pc1 pitch-class)
   (check-type pc1 pitch-class)
+  (pc-interval-backend pc1 pc2 0)) ;(min pc1 pc2) (max pc1 pc2) 0))
+
+;;;ordinal pitch class interval
+(declaim (ftype (function (pitch-class pitch-class) integer) ordinal-pc-interval))
+(defun ordinal-pc-interval (pc1 pc2)
+  "Finds the interval in between two pitch-classes"
+  (check-type pc1 pitch-class)
+  (check-type pc1 pitch-class)
   (pc-interval-backend (min pc1 pc2) (max pc1 pc2) 0))

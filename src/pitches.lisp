@@ -26,7 +26,7 @@
   "Predicates an octave between -1 and 10."
   (and (integerp n)
        (> n -1)
-       (< n 10)))
+       (< n 12)))
 
 (deftype octave ()
   `(satisfies octave-p))
