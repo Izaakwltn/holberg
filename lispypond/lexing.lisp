@@ -16,26 +16,20 @@
   (cons type val))
 
 (alexa:define-string-lexer lily-lexer
-  ()
-  ;("%.*\\\n" (return (tok :comment $@)))
+  ((:note "[abcdefg][is|es]*[,|']*[0-9]*"))
+					
   ("%\\{.*%\\}" (return (tok :comment $@))) ; multiline comment
-  ("%[^\\{][^\\\n]*" (return (tok :comment $@))) ;single line comment (troubleshoot)
-  ("[abcdefg][is|es]*[,|']*[0-9]*" (return (tok :note $@)))
+  ("%[^\\{][^\\\n]*" (return (tok :comment $@))) ;single line comment
+  ("{{NOTE}}" (return (tok :note $@)))
   ("\\\\\[A-Za-z]*" (return (tok :keyword (subseq $@ 1))))
-  ;("'" (return (tok :octave-up)))
-  ;("," (return (tok :octave-down)))
-;  ("\\(" (return (tok :slur-open)))
- ; ("\\)" (return (tok :slur-close)))
+  ("<" (return (tok :chord-start)))
+  (">" (return (tok :chord-end)))
   ("\\|" (return (tok :bar-pipe)))
   ("\\d+/\\d+" (return (tok :meter $@)))
   ("\\d+" (return (tok :number (parse-integer $@))))
   ("\\{" (return (tok :left-curly)))
   ("\\}" (return (tok :right-curly)))
   ("[A-Za-z0-9][A-Za-z0-9]*" (return (tok :value $@)))
-
-                                        ;("[a-g]" (return (tok :pc (princ $@))))
-                                        ;("\\\".\\\"" (return (tok :string)))
-  ;("\\\n" (return (tok :newline)))
   ("\\s+" nil))
 
 (defun lily-lex (lily-string)
