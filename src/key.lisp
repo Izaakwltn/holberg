@@ -2,7 +2,18 @@
 ;;;;
 ;;;; Copyright (c) 2022 Izaak Walton
 
-(in-package :holberg)
+(defpackage #:holberg.key
+  (:use #:cl
+	#:holberg.pitch-class)
+  (:export #:key
+	   #:pc-set
+	   #:tonic
+	   #:quality
+	   #:key-transpose
+	   #:relative-key
+	   #:parallel-key))
+
+(in-package :holberg.key)
 
 ;;; defining key qualities using pitch class sets:
 
@@ -25,7 +36,6 @@
 (declaim (ftype (function (string) (or t null)) key-quality-p))
 (defun key-quality-p (n)
   "Defines the key-quality type"
-  (check-type n string)
   (member n (mapcar #'first *key-list*) :test #'equal))
 
 (deftype key-quality ()
@@ -36,7 +46,6 @@
 (declaim (ftype (function (key-quality) pc-set) key-set))
 (defun key-set (quality-string)
   "Returns the key pc-set for a given quality."
-  (check-type quality-string key-quality)
   (second (assoc quality-string *key-list* :test #'string-equal)))
 
 ;;; making Key objects
@@ -55,17 +64,14 @@
 			 (quality quality)
                          (pc-set pc-set))
             obj
-          (format stream "(~a/~a) ~a, ~a"
+          (format stream "~a ~a, ~a"
 		  tonic
-                  (number-name tonic)
 		  quality
                   pc-set))))
 
 (declaim (ftype (function (pitch-class key-quality) key) make-key))
 (defun make-key (tonic quality)
   "Makes an instance of key."
-  (check-type tonic pitch-class)
-  (check-type quality key-quality)
   (make-instance 'key :tonic tonic
                       :quality quality
                       :pc-set (set-transpose (key-set quality) tonic)))

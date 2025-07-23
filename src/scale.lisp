@@ -1,8 +1,14 @@
-;;;; scales.lisp
+;;;; scale.lisp
 ;;;;
-;;;; Copyright Izaak Walton (c) 2022
+;;;; Copyright Izaak Walton (c) 2022 - 2025
 
-(in-package :holberg)
+(defpackage #:holberg.scale
+  (:use #:cl
+	#:holberg.pitch
+	#:holberg.collection
+	#:holberg.key))
+
+(in-package #:holberg.scale)
 
 ;;; scale class
 
@@ -32,25 +38,19 @@
 (declaim (ftype (function (key pitch pitch) collection) populate-scale))
 (defun populate-scale (key first-pitch last-pitch)
   "Finds the pitches for a given scale"
-  (check-type key key)
-  (check-type first-pitch pitch)
-  (check-type last-pitch pitch)
-  (cond ((pitch-equal first-pitch last-pitch) (list last-pitch))
+  (cond ((pitch= first-pitch last-pitch) (list last-pitch))
         ((member (pc first-pitch) (pc-set key))
          (cons first-pitch
                (populate-scale key
-                               (pitch-incr first-pitch)
+                               (pitch-transpose first-pitch 1)
                                last-pitch)))
-        (t (populate-scale key (pitch-incr first-pitch) last-pitch))))
+        (t (populate-scale key (pitch-transpose first-pitch 1) last-pitch))))
 
 ;;; Actually making the scale
 
 (declaim (ftype (function (key pitch pitch) scale) make-scale))
 (defun make-scale (key first-pitch last-pitch)
   "Makes a scale in between two pitches (can handle non-chord pitches)."
-  (check-type key key)
-  (check-type first-pitch pitch)
-  (check-type last-pitch pitch)
   (make-instance 'scale :key key
                         :first-pitch first-pitch
                         :last-pitch last-pitch
@@ -60,29 +60,21 @@
 
 (defun quick-scale (key first-octave octaves)
   "Makes a scale using just the key, the first octave, and the number of octaves."
-  (check-type key key)
-  (check-type first-octave octave)
-  (check-type octaves octave)
-  (let ((root (make-pitch (tonic key) first-octave)))
+  (let ((root (pitch (tonic key) first-octave)))
     (make-scale key
                 root
                 (pitch-transpose root (* octaves 12)))))
 
 (declaim (ftype (function (scale integer) scale) scale-transpose))
-
 (defun scale-transpose (scale interval)
   "Transposes a scale up or down by a given interval."
-  (check-type scale scale)
-  (check-type interval integer)
   (make-scale (key-transpose (key scale) interval)
               (pitch-transpose (first-pitch scale) interval)
               (pitch-transpose (last-pitch scale) interval)))
 
 (declaim (ftype (function (scale) scale) relative-scale))
-
 (defun relative-scale (scale)
   "Returns the relative major or minor for a given scale."
-  (check-type scale scale)
   (if (string-equal (quality (key scale)) "major")
       (make-scale (relative-key (key scale))
                   (pitch-transpose (first-pitch scale) -3)
@@ -95,7 +87,6 @@
 
 (defun parallel-scale (scale)
   "Returns the parallel major or minor for a given scale."
-  (check-type scale scale)
   (make-scale (parallel-key (key scale))
               (first-pitch scale)
               (last-pitch scale)))
