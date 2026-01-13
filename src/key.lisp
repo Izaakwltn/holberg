@@ -1,8 +1,23 @@
-;;;; keys.lisp
+;;;; key.lisp
 ;;;;
-;;;; Copyright (c) 2022 Izaak Walton
+;;;; Copyright (c) 2022 - 2026 Izaak Walton
 
-(in-package :holberg)
+(defpackage #:holberg.key
+  (:use #:cl)
+  (:local-nicknames
+   (#:pcs #:holberg.pitch-class-set)
+   (#:pc #:holberg.pitch-class))
+  (:export
+   #:key
+   #:key-set
+   #:key-tonic
+   #:key-quality
+   #:key-pc-set
+   #:key-transpose
+   #:relative-key
+   #:parallel-key))
+
+(in-package :holberg.key)
 
 ;;; defining key qualities using pitch class sets:
 
@@ -33,7 +48,7 @@
 
 ;;; searching for a quality's pc-set
 
-(declaim (ftype (function (key-quality) pc-set) key-set))
+(declaim (ftype (function (key-quality) pcs:pc-set) key-set))
 (defun key-set (quality-string)
   "Returns the key pc-set for a given quality."
   (check-type quality-string key-quality)
@@ -41,59 +56,55 @@
 
 ;;; making Key objects
 
-(defclass key ()
-  ((tonic   :initarg :tonic
-            :accessor tonic)
-   (quality :initarg :quality
-            :accessor quality)
-   (pc-set  :initarg :pc-set
-            :accessor pc-set)))
+(defstruct key
+  tonic
+  quality
+  pc-set)
 
 (defmethod print-object ((obj key) stream)
       (print-unreadable-object (obj stream :type t)
-        (with-accessors ((tonic tonic)
-			 (quality quality)
-                         (pc-set pc-set))
+        (with-accessors ((tonic key-tonic)
+			 (quality key-quality)
+                         (pc-set key-pc-set))
             obj
-          (format stream "(~a/~a) ~a, ~a"
+          (format stream "~a ~a, ~a"
 		  tonic
-                  (number-name tonic)
 		  quality
                   pc-set))))
 
-(declaim (ftype (function (pitch-class key-quality) key) make-key))
-(defun make-key (tonic quality)
+(declaim (ftype (function (pc:pitch-class key-quality) key) key))
+(defun key (tonic quality)
   "Makes an instance of key."
-  (check-type tonic pitch-class)
+  (check-type tonic pc:pitch-class)
   (check-type quality key-quality)
-  (make-instance 'key :tonic tonic
-                      :quality quality
-                      :pc-set (set-transpose (key-set quality) tonic)))
+  (make-key :tonic tonic
+            :quality quality
+            :pc-set (pcs:set-transpose (key-set quality) tonic)))
 ;;;
 
 (declaim (ftype (function (key integer) key) key-transpose))
 (defun key-transpose (key interval)
   "Transposes a key by a given interval."
-  (make-key (pc-transpose (tonic key) interval) (quality key)))
+  (key (pc:pc-transpose (key-tonic key) interval) (key-quality key)))
 
 ;;; relative and parallel keys
 
 (declaim (ftype (function (key) key) relative-key))
 (defun relative-key (key)
   "Returns the relative major or minor for a given key."
-  (let ((quality (quality key))
-        (tonic   (tonic key)))
+  (let ((quality (key-quality key))
+        (tonic   (key-tonic key)))
     (if (equal quality "major")
-        (make-key (pc-transpose tonic -3)
+        (key (pc:pc-transpose tonic -3)
                   "natural-minor")
-        (make-key (pc-transpose tonic 3)
+        (key (pc:pc-transpose tonic 3)
                   "major"))))
 
 (declaim (ftype (function (key) key) parallel-key))
 (defun parallel-key (key)
   "Returns the parallel major or minor for a given key"
-  (make-key (tonic key)
-            (if (string-equal (quality key) "major")
+  (key (key-tonic key)
+            (if (string-equal (key-quality key) "major")
                 "natural-minor"
                 "major")))
   
