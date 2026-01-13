@@ -38,10 +38,8 @@
 
 ;;; making pitches
 
-(declaim (ftype (function (pc:pitch-class integer) pitch) pitch))
-(defun pitch (pc octave)
+(defun pitch (&optional (pc 9) (octave 4))
   "Makes a note from a pitch class and an octave."
-  (check-type pc pc:pitch-class)
   (make-pitch :pc pc
 	      :octave octave))
 

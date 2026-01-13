@@ -13,7 +13,7 @@
 ;;; scale class
 
 (defstruct scale
-  (key (key:key 0 "major") :type key:key)
+  (key (key:make-key :tonic 0 :quality "major") :type key:key)
   (first-pitch (pitch:pitch 0 4) :type pitch:pitch)
   (last-pitch (pitch:pitch 0 5) :type pitch:pitch))
 
@@ -21,7 +21,7 @@
   "Finds the pitches for a given scale"
   (labels ((gather (key first-pitch last-pitch)
 	     (cond ((pitch:pitch= first-pitch last-pitch) (list last-pitch))
-		   ((member (pitch:pitch-pc first-pitch) (key:key-pc-set key))
+		   ((member (pitch:pitch-pc first-pitch) (key:key-set key))
 		    (cons first-pitch
 			  (gather key
 				  (pitch:pitch-incr first-pitch)

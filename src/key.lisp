@@ -13,7 +13,6 @@
    #:key-set
    #:key-tonic
    #:key-quality
-   #:key-pc-set
    #:key-transpose
    #:relative-key
    #:parallel-key))
@@ -41,11 +40,10 @@
 (declaim (ftype (function (string) (or t null)) key-quality-p))
 (defun key-quality-p (n)
   "Defines the key-quality type"
-   (member n (mapcar #'first *key-list*) :test #'equal))
+  (assoc n *key-list* :test #'string-equal))
 
 (deftype key-quality ()
   `(satisfies key-quality-p))
-
 
 ;;; making Key objects
 
@@ -64,7 +62,8 @@
 (declaim (ftype (function (key integer) key) key-transpose))
 (defun key-transpose (key interval)
   "Transposes a key by a given interval."
-  (key (pc:pc-transpose (key-tonic key) interval) (key-quality key)))
+  (make-key :tonic (pc:pc-transpose (key-tonic key) interval)
+	    :quality (key-quality key)))
 
 ;;; relative and parallel keys
 
@@ -74,17 +73,17 @@
   (let ((quality (key-quality key))
         (tonic   (key-tonic key)))
     (if (equal quality "major")
-        (key (pc:pc-transpose tonic -3)
-                  "natural-minor")
-        (key (pc:pc-transpose tonic 3)
-                  "major"))))
+        (make-key :tonic (pc:pc-transpose tonic -3)
+                  :quality "natural-minor")
+        (make-key :tonic (pc:pc-transpose tonic 3)
+                  :quality "major"))))
 
 (declaim (ftype (function (key) key) parallel-key))
 (defun parallel-key (key)
   "Returns the parallel major or minor for a given key"
-  (key (key-tonic key)
-            (if (string-equal (key-quality key) "major")
-                "natural-minor"
-                "major")))
+  (make-key :tonic (key-tonic key)
+            :quality (if (string-equal (key-quality key) "major")
+			 "natural-minor"
+			 "major")))
   
   
