@@ -40,8 +40,7 @@
 (declaim (ftype (function (string) (or t null)) key-quality-p))
 (defun key-quality-p (n)
   "Defines the key-quality type"
-  (check-type n string)
-  (member n (mapcar #'first *key-list*) :test #'equal))
+   (member n (mapcar #'first *key-list*) :test #'equal))
 
 (deftype key-quality ()
   `(satisfies key-quality-p))
@@ -51,7 +50,6 @@
 (declaim (ftype (function (key-quality) pcs:pc-set) key-set))
 (defun key-set (quality-string)
   "Returns the key pc-set for a given quality."
-  (check-type quality-string key-quality)
   (second (assoc quality-string *key-list* :test #'string-equal)))
 
 ;;; making Key objects
@@ -75,8 +73,7 @@
 (declaim (ftype (function (pc:pitch-class key-quality) key) key))
 (defun key (tonic quality)
   "Makes an instance of key."
-  (check-type tonic pc:pitch-class)
-  (check-type quality key-quality)
+   
   (make-key :tonic tonic
             :quality quality
             :pc-set (pcs:set-transpose (key-set quality) tonic)))

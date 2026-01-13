@@ -50,8 +50,6 @@
 (declaim (ftype (function (pitch pitch) (or t null)) pitch=))
 (defun pitch= (pitch1 pitch2)
   "Checks whether two pitches are equal"
-  (check-type pitch1 pitch)
-  (check-type pitch2 pitch)
   (and (= (pitch-pc pitch1) (pitch-pc pitch2))
        (= (pitch-octave pitch1) (pitch-octave pitch2))))
 
@@ -60,8 +58,6 @@
 (declaim (ftype (function (pitch pitch) (or t nil)) pitch>))
 (defun pitch> (pitch1 pitch2)
   "Returns whether a note is higher than another"
-  (check-type pitch1 pitch)
-  (check-type pitch2 pitch)
   (cond ((> (pitch-octave pitch1) (pitch-octave pitch2))
 	 t)
 	((and (> (pitch-pc pitch1) (pitch-pc pitch2))
@@ -72,8 +68,6 @@
 (declaim (ftype (function (pitch pitch) pitch) max-pitch))
 (defun max-pitch (pitch1 pitch2)
       "Returns the higher of two pitches"
-      (check-type pitch1 pitch)
-      (check-type pitch2 pitch)
       (if (pitch> pitch1 pitch2)
 	  pitch1
 	  pitch2))
@@ -86,8 +80,6 @@
 (declaim (ftype (function (pitch pitch) pitch) min-pitch))
 (defun min-pitch (pitch1 pitch2)
   "Returns the higher of two pitches"
-  (check-type pitch1 pitch)
-  (check-type pitch2 pitch)
   (if (pitch< pitch1 pitch2)
       pitch1
       pitch2))
@@ -97,7 +89,6 @@
 (declaim (ftype (function (pitch) pitch) pitch-incr))
 (defun pitch-incr (pitch)
   "Increments the note."
-  (check-type pitch pitch)
   (pitch (mod (1+ (pitch-pc pitch)) 12)
 	      (if (equal (pitch-pc pitch) 11)
 		  (1+ (pitch-octave pitch))
@@ -105,8 +96,7 @@
 
 (declaim (ftype (function (pitch) pitch) pitch-decr))
 (defun pitch-decr (pitch)
-  "Decrements the note"
-  (check-type pitch pitch)
+  "Decrements the note" 
   (pitch (mod (1- (pitch-pc pitch)) 12)
 	      (if (zerop (pitch-pc pitch))
 		  (1- (pitch-octave pitch))
@@ -122,8 +112,6 @@
 (declaim (ftype (function (pitch pitch) integer) pitch-interval))
 (defun pitch-interval (pitch1 pitch2)
   "Returns the interval between two pitches in halfsteps"
-  (check-type pitch1 pitch)
-  (check-type pitch2 pitch)
   (pitch-interval-backend (min-pitch pitch1 pitch2) (max-pitch pitch1 pitch2) 0))
 
 ;;; pitch transposition
@@ -131,8 +119,6 @@
 (declaim (ftype (function (pitch integer) pitch) pitch-transpose))
 (defun pitch-transpose (pitch interval)
   "Transposes a pitch by a given signed interval"
-  (check-type pitch pitch)
-  (check-type interval integer)
   (cond ((zerop interval) pitch)
 	((> interval 0)
 	 (pitch-transpose (pitch-incr pitch) (1- interval)))

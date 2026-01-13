@@ -18,7 +18,7 @@
 	                             (:file "collection")
                                      (:file "key")
 	                             (:file "scale")
-                                     ;(:file "chords")
+                                     (:file "chord")
                                      ;(:file "progressions")
                                      ;(:file "romans")
                                      ;(:file "rhythm")

@@ -45,8 +45,6 @@
 (declaim (ftype (function (scale integer) scale) scale-transpose))
 (defun scale-transpose (scale interval)
   "Transposes a scale up or down by a given interval."
-  (check-type scale scale)
-  (check-type interval integer)
   (make-scale :key (key:key-transpose (scale-key scale) interval)
               :first-pitch (pitch:pitch-transpose (scale-first-pitch scale) interval)
               :last-pitch (pitch:pitch-transpose (scale-last-pitch scale) interval)))
@@ -55,21 +53,14 @@
 
 (defun relative-scale (scale)
   "Returns the relative major or minor for a given scale."
-  (check-type scale scale)
   (make-scale :key (key:relative-key (scale-key scale))
                   :first-pitch (pitch:pitch-transpose (scale-first-pitch scale) -3)
-                  :last-pitch (pitch:pitch-transpose (scale-last-pitch scale) -3))
-#+ig  (if (string-equal (key:key-quality (scale-key scale)) "major")
-      
-      (make-scale :key (key:relative-key (scale-key scale))
-                  :first-pitch (pitch:pitch-transpose (scale-first-pitch scale) -3)
-                  :last-pitch (pitch:pitch-transpose (scale-last-pitch scale) -3))))
+                  :last-pitch (pitch:pitch-transpose (scale-last-pitch scale) -3)))
 
 (declaim (ftype (function (scale) scale) parallel-scale))
 
 (defun parallel-scale (scale)
   "Returns the parallel major or minor for a given scale."
-  (check-type scale scale)
   (make-scale :key (key:parallel-key (scale-key scale))
               :first-pitch (scale-first-pitch scale)
               :last-pitch (scale-last-pitch scale)))

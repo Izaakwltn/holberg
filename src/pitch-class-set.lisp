@@ -24,7 +24,6 @@
 (declaim (ftype (function (list) (or t null)) pc-set-p))
 (defun pc-set-p (ls)
   "Determines whether the list constitutes a pitch class set."
-  (check-type ls list)
   (every #'pc::pitch-class-p ls)
   #+ig
   (cond ((null ls) t)
@@ -56,7 +55,6 @@
 (declaim (ftype (function (pc-set) symbol) chord-size-name))
 (defun chord-size-name (pc-set)
   "Returns the designated name for the length of pitch-class set"
-  (check-type pc-set pc-set)
   (second (assoc (length pc-set)
 		 *chord-size-names*)))
 
@@ -65,13 +63,11 @@
 (declaim (ftype (function (pc-set) pc-set) ascending))
 (defun ascending (pc-set)
   "Sorts a pitch class set in ascending order."
-  (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'<))
 
 (declaim (ftype (function (pc-set) pc-set) descending))
 (defun descending (pc-set)
   "Sorts a pitch class set in descending order"
-  (check-type pc-set pc-set)
   (sort (copy-list pc-set) #'>))
 
 ;;; Set transposition
@@ -79,8 +75,6 @@
 (declaim (ftype (function (pc-set integer) pc-set) set-transpose))
 (defun set-transpose (pc-set interval)
   "Transposes a pitch class set by a given interval"
-  (check-type pc-set pc-set)
-  (check-type interval integer)
   (mapcar #'(lambda (pc)
 	      (pc:pc-transpose pc interval))
 	  pc-set))
@@ -90,7 +84,6 @@
 (declaim (ftype (function (pc-set) pc-set) set-permutate))
 (defun set-permutate (pc-set)
   "Shifts a pitch class set over by one"
-  (check-type pc-set pc-set)
   (append (cdr pc-set) (list (car pc-set))))
 
 ;;; finding Normal Order and Normal Form
@@ -98,15 +91,12 @@
 (declaim (ftype (function (pc-set) integer) first-last-interval))
 (defun first-last-interval (pc-set)
   "Finds the interval between the first PC and last PC in a PC set"
-  (check-type pc-set pc-set)
   (pc:pc-interval (first pc-set)
 	       (car (last pc-set))))
 
 (declaim (ftype (function (pc-set pc-set) (or t nil)) more-normal-p))
 (defun more-normal-p (pcs-1 pcs-2)
   "Finds the more normalized of two pc-sets"
-  (check-type pcs-1 pc-set)
-  (check-type pcs-2 pc-set)
   (cond ((equal (length pcs-1) 1)
 	 t)
 	((< (first-last-interval pcs-1)
@@ -125,7 +115,6 @@
 (declaim (ftype (function (pc-set) pc-set) normal-order))
 (defun normal-order (pc-set)
   "Returns the normal order for a pc-set (organized by smallest intervals)"
-  (check-type pc-set pc-set)
   (loop :with permutated := (ascending pc-set)
 	:with normalest  := permutated
 	
@@ -138,7 +127,6 @@
 (declaim (ftype (function (pc-set) pc-set) normal-form))
 (defun normal-form (pc-set)
   "Returns the normal form for a given pitch-class set"
-  (check-type pc-set pc-set)
   (let ((no (normal-order pc-set)))
     (set-transpose no (- (first no)))))
 
@@ -147,5 +135,4 @@
 (declaim (ftype (function (pc-set) pc-set) set-compliment))
 (defun set-complement (pc-set)
   "Finds the set's complement (the set containing all pcs not in the original set"
-  (check-type pc-set pc-set)
   (set-difference '(0 1 2 3 4 5 6 7 8 9 10 11) pc-set))
