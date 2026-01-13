@@ -9,6 +9,7 @@
    (#:pc #:holberg.pitch-class))
   (:export
    #:key
+   #:make-key
    #:key-set
    #:key-tonic
    #:key-quality
@@ -45,38 +46,19 @@
 (deftype key-quality ()
   `(satisfies key-quality-p))
 
-;;; searching for a quality's pc-set
-
-(declaim (ftype (function (key-quality) pcs:pc-set) key-set))
-(defun key-set (quality-string)
-  "Returns the key pc-set for a given quality."
-  (second (assoc quality-string *key-list* :test #'string-equal)))
 
 ;;; making Key objects
 
 (defstruct key
-  tonic
-  quality
-  pc-set)
+  (tonic 0 :type pc:pitch-class)
+  (quality "major" :type key-quality))
 
-(defmethod print-object ((obj key) stream)
-      (print-unreadable-object (obj stream :type t)
-        (with-accessors ((tonic key-tonic)
-			 (quality key-quality)
-                         (pc-set key-pc-set))
-            obj
-          (format stream "~a ~a, ~a"
-		  tonic
-		  quality
-                  pc-set))))
+(declaim (ftype (function (key) pcs:pc-set) key-set))
+(defun key-set (key)
+  "Returns the key pc-set for a given quality."
+  (pcs:set-transpose (second (assoc (key-quality key) *key-list* :test #'string-equal))
+		     (key-tonic key)))
 
-(declaim (ftype (function (pc:pitch-class key-quality) key) key))
-(defun key (tonic quality)
-  "Makes an instance of key."
-   
-  (make-key :tonic tonic
-            :quality quality
-            :pc-set (pcs:set-transpose (key-set quality) tonic)))
 ;;;
 
 (declaim (ftype (function (key integer) key) key-transpose))

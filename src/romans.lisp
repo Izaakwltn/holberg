@@ -1,10 +1,22 @@
-;;;; romans.lisp
+;;;; roman-numerals.lisp
 ;;;;
-;;;; Copyright (c) 2022 Izaak Walton
+;;;; Copyright (c) 2022 - 2026 Izaak Walton
 
-(in-package :holberg)
+(defpackage #:holberg.romans
+  (:use #:cl)
+  (:local-nicknames
+   (#:pc #:holberg.pitch-class)
+   (#:pcs #:holberg.pitch-class-set)
+   (#:chord #:holberg.chord)
+   (#:pr #:holberg.progression)))
+
+(in-package :holberg.romans)
 
 ;;; roman numeral symbol analysis tools within a given key
+
+;; TODO derive roman-numeral from tonic and chord using format ~@r and probably mod
+#+ig(defun roman-numeral (tonic chord)
+  (chord-pc-set))
 
 (defvar *romans* '(("i"     (0 3 7))
 		   ("I"     (0 4 7))
@@ -33,7 +45,7 @@
 		   ("viidim" (11 2 5)))) ;add 7 chords, aug dim for each, 6 chords
 
 (defun roman-p (x)
-  (member x (mapcar #'first *romans*) :test #'equal))
+  (assoc x *romans* :test #'string-equal))
 
 (deftype roman ()
   `(satisfies roman-p))
@@ -48,23 +60,20 @@
   `(satisfies romans-p))
 ;;; Finding chords by Roman Numeral
 
-(declaim (ftype (function (pitch-class roman) chord) roman-chord)) ;;;;;;;;;;;;;;Technically can just be a pc not a key
+(declaim (ftype (function (pc:pitch-class roman) chord:chord) roman-chord)) ;;;;;;;;;;;;;;Technically can just be a pc not a key
 (defun roman-chord (tonic roman)
   "Finds the chord designated by the given roman numeral in the key."
-  (check-type tonic pitch-class)
-  (check-type roman roman)
-  (let ((pcs (set-transpose (second (assoc roman *romans* :test #'equal)) tonic)))
-    (make-chord (first pcs)
-		(chord-set-quality pcs))))
+  
+  (let ((pcs (pcs:set-transpose (second (assoc roman *romans* :test #'equal)) tonic)))
+    (chord:make-chord :root (first pcs)
+		      :quality (chord:pcs->chord-quality pcs))))
 
 ;;; Finding roman numerals given chords
 
-(declaim (ftype (function (pitch-class chord) roman) chord-roman))
+(declaim (ftype (function (pc:pitch-class chord:chord) roman) chord-roman))
 (defun chord-roman (tonic chord)
   "Returns the roman for a given chord in the given key."
-  (check-type tonic pitch-class)
-  (check-type chord chord)
-  (let ((pcs (set-transpose (pc-set chord) (- tonic))))
+  (let ((pcs (pcs:set-transpose (chord:chord-pc-set chord) (- tonic))))
     (first (find-if #'(lambda (x)
 		 (equal (second x)
 		     pcs))
@@ -72,20 +81,16 @@
 
 ;;; processing lists of chords or romans
 
-(declaim (ftype (function (pitch-class romans) progression) roman-chord-list))
+(declaim (ftype (function (pc:pitch-class romans) pr:progression) roman-chord-list))
 (defun roman-chord-list (tonic roman-list)
   "Returns the chords designated by a list of romans."
-  (check-type tonic pitch-class)
-  (check-type roman-list romans)
   (mapcar #'(lambda (r)
               (roman-chord tonic r))
           roman-list))
 
-(declaim (ftype (function (pitch-class progression) romans) chord-roman-list))
+(declaim (ftype (function (pc:pitch-class pr:progression) romans) chord-roman-list))
 (defun chord-roman-list (tonic chord-list)
-  "Returns the respective romans for a given key and progression."
-  (check-type tonic pitch-class)
-  (check-type chord-list progression)
+  "Returns the respective romans for a given key and pr:progression."
   (mapcar #'(lambda (c)
               (chord-roman tonic c))
           chord-list))
@@ -112,11 +117,11 @@
 
 ;;; Maybe move this stuff to chords.lisp, or print-systems
 
-(declaim (ftype (function (chord) string) pretty-print-chord))
-(defun pretty-print-chord (chord)
-  (format nil "~a ~a" (number-string (root chord)) (quality chord)))
+;(declaim (ftype (function (chord:chord) string) pretty-print-chord))
+#+ig(defun pretty-print-chord (chord)
+  (format nil "~a ~a" (number-string (chord:chord-root chord)) (chord:chord-quality chord)))
 
-(defun pretty-print-chords (chord-list)
+#+ig(defun pretty-print-chords (chord-list)
   "Converts holberg chords into something nice to read"
   (cond ((equal (length chord-list) 1)
 	 (format nil "~a."(pretty-print-chord (first chord-list))))
@@ -124,7 +129,7 @@
 		   (pretty-print-chord (first chord-list))
 		   (pretty-print-chords (rest chord-list))))))
 
-(defun process-roman-input (roman-input-string)
+#+ig(defun process-roman-input (roman-input-string)
   (let ((input (parse-romans-input roman-input-string)))
     (pretty-print-chords
      (roman-chord-list (string-number (first input))
@@ -151,13 +156,13 @@
 			   (format nil "~a~a" current-token (subseq chord-input-string (1- i) i))))) 
 		  :finally (return (reverse (cons (reverse (cons current-token current-chord)) chord-pairs)))))
   
-(defun convert-chords (parsed-chord-list)
+#+ig(defun convert-chords (parsed-chord-list)
   (mapcar #'(lambda (c)
 	      (make-chord (string-number (first c))
 			  (second c)))
 	  parsed-chord-list))
 
-(defun process-chord-input (chord-input-string) ;example: "G Gmajor Cmajor Dmajor"
+#+ig(defun process-chord-input (chord-input-string) ;example: "G Gmajor Cmajor Dmajor"
   (let ((input (parse-chords-input chord-input-string)))
     (chord-roman-list (string-number (first (first input)))
 		      (convert-chords (rest input)))))

@@ -13,6 +13,7 @@
    #:ascending
    #:descending
    #:set-transpose
+   #:set-permutate
    #:normal-order
    #:normal-form
    #:set-complement))
