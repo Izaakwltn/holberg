@@ -2,17 +2,68 @@
 ;;;;
 ;;;; Copyright (c) 2022 Izaak Walton
 
-(in-package :holberg)
+(defpackage #:holberg.tuning
+  (:use #:cl)
+  (:local-nicknames
+   (#:pitch #:holberg.pitch))
+  (:export
+   #:configure-tuning
+   #:freq))
 
-(defvar *concert-a* 440.0)
-(defun set-concert-a (a-freq)
-  (check-type a-freq freq)
-  (setq *concert-a* a-freq))
+(in-package #:holberg.tuning)
+
+;;; tuning should be defined as a function that takes a pitch and returns a frequency
+;;;
+
+;;;
+;;; Tuning configuration
+;;;
+
+(defvar *A4* 440.0)
+
+(defvar *tuning-method* #'equal-temperament)
+
+(defun configure-tuning (&key (A4 *A4*) (tuning-method *tuning-method*))
+  (check-type A4 single-float)
+  (check-type tuning-method function)
+  (setq *A4* A4)
+  (setq *tuning-method* tuning-method)
+  (format t "Tuning configured: A4: ~a, method: ~a" A4 tuning-method))
+
+(defun freq (pitch &key (A4 *A4*) (tuning-method *tuning-method*))
+  "Take a pitch and return "
+  (configure-tuning )
+  (funcall tuning-method *tuning-method* pitch))
+
+;;;
+;;; Equal temperament
+;;;
+
+(defun octave-a (octave)
+  (* *A4* (expt 2 (- octave 4))))
+
+(defun %equal-step (freq n)
+  (cond ((zerop n)
+	 freq)
+	((plusp n)
+	 (%equal-step (* freq (expt 2 (/ 1 12)))
+		      (1- n)))
+	((minusp n)
+	 (%equal-step (/ freq (expt 2 (/ 1 12)))
+		      (1+ n)))))
+
+(declaim (ftype (function (pitch:pitch) single-float)))
+(defun equal-temperament (pitch)
+  "Returns the equal temperament frequency of a pitch."
+  (%equal-step *A4* (pitch:pitch-interval (pitch:pitch 9 4)
+					  pitch))) 
+
+
 
 ;;; pythagorean tuning
 
-;(defun pythag-temperament (root)
- ; (
+					;(defun pythag-temperament (root)
+					; (
 
 ;;;; so lets say we have a 440.0
 ;;; 440.0 * 3/2 = 660.0

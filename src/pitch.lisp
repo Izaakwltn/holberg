@@ -110,7 +110,10 @@
 (declaim (ftype (function (pitch pitch) integer) pitch-interval))
 (defun pitch-interval (pitch1 pitch2)
   "Returns the interval between two pitches in halfsteps"
-  (pitch-interval-backend (min-pitch pitch1 pitch2) (max-pitch pitch1 pitch2) 0))
+  (let ((interval (pitch-interval-backend (min-pitch pitch1 pitch2) (max-pitch pitch1 pitch2) 0)))
+    (if (pitch> pitch1 pitch2)
+	(- interval)
+	interval)))
 
 ;;; pitch transposition
 
