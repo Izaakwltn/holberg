@@ -22,20 +22,29 @@
                                      (:file "progression")
                                      (:file "romans")
                                      (:file "event")
-	                             (:file "tuning")
-                                     ;(:file "overtones")                       
-            ;                         (:file "tunings")
-				     ))))
+	                             (:file "tuning")))))
+
+(asdf:defsystem "holberg/seria"
+  :version "0.0.1"
+  :author "Izaak Walton <izaakw@protonmail.com>"
+  :license "GNU General Purpose License"
+  :description "Tools for serial tone row manipulation"
+  :depends-on ("holberg")
+  :serial t
+  :components ((:module "seria"
+			:serial t
+			:components ((:file "row")
+				     (:file "matrix")))))
 
 #+ig(asdf:defsystem "holberg/app"
-  :version "0.0.1"
-  :author "Izaak Walton <izaakw@protonmail.com"
-  :license "GNU General Purpose License"
-  :description "Webapp for Holberg music tools"
-  :depends-on ("holberg" "otakar" "seria")
-  :serial t
-  :build-operation program-op
-  :build-pathname "launch-suite"
-  :entry-point "holberg"
-  )
+      :version "0.0.1"
+      :author "Izaak Walton <izaakw@protonmail.com"
+      :license "GNU General Purpose License"
+      :description "Webapp for Holberg music tools"
+      :depends-on ("holberg" "otakar" "seria")
+      :serial t
+      :build-operation program-op
+      :build-pathname "launch-suite"
+      :entry-point "holberg"
+      )
                
