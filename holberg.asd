@@ -36,6 +36,17 @@
 			:components ((:file "row")
 				     (:file "matrix")))))
 
+(asdf:defsystem "holberg/oatakar"
+  :version "0.0.1"
+  :author "Izaak Walton <izaakw@protonmail.com>"
+  :license "GNU General Purpose License"
+  :description "Tools for stringed instrument analysis."
+  :depends-on ("holberg")
+  :serial t
+  :components ((:module "otakar"
+			:serial t
+			:components ((:file "instrument")))))
+
 #+ig(asdf:defsystem "holberg/app"
       :version "0.0.1"
       :author "Izaak Walton <izaakw@protonmail.com"

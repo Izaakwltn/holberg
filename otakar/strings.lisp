@@ -2,27 +2,37 @@
 ;;;;
 ;;;; Copyright Izaak Walton (C) 2023
 
-(in-package :otakar)
+(defpackage #:otakar.string
+  (:use #:cl)
+  (:local-nicknames
+   (#:pitch  #:holberg.pitch)
+   (#:tuning #:holberg.tuning))
+  (:export
+   #:instr-string
+   #:make-instr-string
+   #:instr-string-p
+   #:instr-string-freq
+   #:pitch-on-string))
 
-;;; String definitions and tuning calculations
+(in-package :otakar.string)
 
-(defvar *standard-a* 440.0)
+(defstruct instr-string ;; 'string' is reserved by cl obviously
+  "An instrument string is defined by its open frequency and its range in half steps."
+  (open       (pitch:pitch) :type pitch:pitch)
+  (half-steps 30            :type integer))
 
-(declaim (ftype (function (freq)) set-a))
-(defun set-a (a-freq)
-  "Sets the standard A-4 frequency."
-  (setq *standard-a* a-freq))
+(defun instr-string-freq (str)
+  "Returns the open string frequency using the current tuning method. 
+See #:holberg.tuning for local and global configuration."
+  (tuning:freq (instr-string-open str)))
 
-;;;Comparable A's 
-(declaim (ftype (function (integer) freq) standard-string)) 
-(defun standard-string (transposition)
-  "Generates a string's frequency relative to the standard A."
-  (freq-transpose *standard-a* transposition))
-
-;;; For variable/non-standard A's:
-(defun nonstandard-string (a transposition)
-  "Generates a string's frequency relative to a given A."
-  (freq-transpose a transposition))
+(declaim (ftype (function (instr-string pitch:pitch) integer) pitch-on-string))
+(defun pitch-on-string (str pitch)
+  "Returns the number of half steps above the open string, or nil."
+  (let ((interval (pitch:pitch-interval (instr-string-open str)
+					pitch)))
+    (when (and (plusp interval)
+	       (< interval (instr-string-half-steps str)))
+      interval)))
 
 
-;;; add pythagorean tuning/other tuning systems, add options for standard-string

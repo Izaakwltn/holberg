@@ -9,7 +9,8 @@
   (:export
    #:matrix-p
    #:matrix
-   #:make-matrix))
+   #:make-matrix
+   #:random-matrix))
 
 (in-package #:seria.matrix)
 
