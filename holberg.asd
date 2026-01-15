@@ -36,7 +36,7 @@
 			:components ((:file "row")
 				     (:file "matrix")))))
 
-(asdf:defsystem "holberg/oatakar"
+(asdf:defsystem "holberg/otakar"
   :version "0.0.1"
   :author "Izaak Walton <izaakw@protonmail.com>"
   :license "GNU General Purpose License"
@@ -45,7 +45,8 @@
   :serial t
   :components ((:module "otakar"
 			:serial t
-			:components ((:file "instrument")))))
+			:components ((:file "instrument")
+				     (:file "instrument-presets")))))
 
 #+ig(asdf:defsystem "holberg/app"
       :version "0.0.1"

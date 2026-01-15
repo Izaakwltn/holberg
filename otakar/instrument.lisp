@@ -5,7 +5,22 @@
 (defpackage #:otakar.instrument
   (:use #:cl)
   (:local-nicknames
-   (#:pitch #:holberg.pitch)))
+   (#:pitch #:holberg.pitch))
+  (:export
+   #:instrument
+   #:make-instrument
+   #:instrument-name
+   #:instrument-strings
+   #:instrument-fingerboard-length
+   #:instrument-nut-to-bridge
+   #:instrument-string
+   #:pitch-location
+   #:half-step-distance
+   #:available-range
+   #:distance-between-halfsteps
+   #:upper-bound
+   #:lower-bound
+   #:range))
 
 (in-package #:otakar.instrument)
 
@@ -19,6 +34,19 @@
   (fingerboard-length 270 :type number)
   ;; the distance from nut to bridge in millimeters
   (nut-to-bridge 328 :type number))
+
+(defun instrument-string (instrument string-index)
+  (nth string-index (instrument-strings instrument)))
+
+
+(defun pitch-location (instrument string-index pitch)
+  "Returns the location in half steps of a pitch on a string."
+  (let ((interval (pitch:pitch-interval
+		   (instrument-string instrument string-index)
+		   pitch)))
+    (when (and (plusp interval)
+	       (< interval (available-range instrument)))
+      interval)))
 
 (defun %half-step-distance (remaining-length steps)
   (cond ((zerop steps)
@@ -47,6 +75,11 @@
 		    0
 		    (instrument-fingerboard-length instrument)))
 
+(defun distance-between-halfsteps (instrument s1 s2)
+  "Returns the distance in millimeters between two halfstep increments."
+  (abs (- (half-step-distance instrument s1)
+	  (half-step-distance instrument s2))))
+
 (defun upper-bound (instrument)
   (pitch:pitch-transpose
    (reduce #'pitch:max-pitch (instrument-strings instrument))
@@ -55,11 +88,7 @@
 (defun lower-bound (instrument)
   (reduce #'pitch:min-pitch (instrument-strings instrument)))
 
-
-;;; nut-to-bridge can be used to calculate half-step/fret distances
-
-;;; fingerboard-length + half-step/fret distances can be used to calculate the available range on a string
-
-
-;;; (defun range (instr)) use the string list to determine lowest and highest values
+(defun range (instrument)
+  (values (lower-bound instrument)
+	  (upper-bound instrument)))
 
