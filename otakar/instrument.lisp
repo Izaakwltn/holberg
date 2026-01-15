@@ -12,7 +12,7 @@
    #:instrument-name
    #:instrument-strings
    #:instrument-fingerboard-length
-   #:instrument-nut-to-bridge
+   #:instrument-string-length
    #:instrument-string
    #:pitch-location
    #:half-step-distance
@@ -24,8 +24,10 @@
 
 (in-package #:otakar.instrument)
 
+;;; TODO probably add fingerboard-width
+
 (defstruct instrument
-  (name "violin" :type string)
+  (description "violin" :type string)
   (strings (list (pitch:pitch 7 3)
 		 (pitch:pitch 2 4)
 		 (pitch:pitch 9 4)
@@ -33,7 +35,7 @@
    :type list)
   (fingerboard-length 270 :type number)
   ;; the distance from nut to bridge in millimeters
-  (nut-to-bridge 328 :type number))
+  (string-length 328 :type number))
 
 (defun instrument-string (instrument string-index)
   (nth string-index (instrument-strings instrument)))
@@ -58,7 +60,7 @@
 
 (defun half-step-distance (instrument n-half-steps)
   "Calculates the distance along the string in millimeters for n half steps."
-  (%half-step-distance (instrument-nut-to-bridge instrument) n-half-steps))
+  (%half-step-distance (instrument-string-length instrument) n-half-steps))
 
 (defun %available-range (remaining-length total fingerboard-length)
   (cond ((> total fingerboard-length)
@@ -71,7 +73,7 @@
 
 (defun available-range (instrument)
   "Returns the number of half steps within the fingerboard on an instrument."
-  (%available-range (instrument-nut-to-bridge instrument)
+  (%available-range (instrument-string-length instrument)
 		    0
 		    (instrument-fingerboard-length instrument)))
 
