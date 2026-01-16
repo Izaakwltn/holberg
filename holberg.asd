@@ -46,7 +46,8 @@
   :components ((:module "otakar"
 			:serial t
 			:components ((:file "instrument")
-				     (:file "instrument-presets")))))
+				     (:file "instrument-presets")
+				     (:file "fingering")))))
 
 #+ig(asdf:defsystem "holberg/app"
       :version "0.0.1"

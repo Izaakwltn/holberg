@@ -15,12 +15,13 @@
    #:instrument-string-length
    #:instrument-string
    #:pitch-location
-   #:half-step-distance
-   #:available-range
+   #:half-step-location
+   #:half-step-range
    #:distance-between-halfsteps
    #:upper-bound
    #:lower-bound
-   #:range))
+   #:instrument-range
+   #:range-from-location))
 
 (in-package #:otakar.instrument)
 
@@ -47,50 +48,65 @@
 		   (instrument-string instrument string-index)
 		   pitch)))
     (when (and (plusp interval)
-	       (< interval (available-range instrument)))
+	       (< interval (half-step-range instrument)))
       interval)))
 
-(defun %half-step-distance (remaining-length steps)
+(defun %half-step-location (remaining-length steps)
   (cond ((zerop steps)
 	 0)
 	(t
 	 (let ((offset (/ remaining-length 17.187)))
-	   (+ offset (%half-step-distance (- remaining-length offset)
+	   (+ offset (%half-step-location (- remaining-length offset)
 					  (1- steps)))))))
 
-(defun half-step-distance (instrument n-half-steps)
+(defun half-step-location (instrument n-half-steps)
   "Calculates the distance along the string in millimeters for n half steps."
-  (%half-step-distance (instrument-string-length instrument) n-half-steps))
+  (%half-step-location (instrument-string-length instrument) n-half-steps))
 
-(defun %available-range (remaining-length total fingerboard-length)
-  (cond ((> total fingerboard-length)
+(defun %half-step-range (remaining-length total fingerboard-length string-length)
+  (cond ((or (> total fingerboard-length)
+	     (< remaining-length (- string-length fingerboard-length)))
 	 0)
 	(t
 	 (let ((offset (/ remaining-length 17.187)))
-	   (1+ (%available-range (- remaining-length offset)
+	   (1+ (%half-step-range (- remaining-length offset)
 				 (+ total offset)
-				 fingerboard-length))))))
+				 fingerboard-length
+				 string-length))))))
 
-(defun available-range (instrument)
-  "Returns the number of half steps within the fingerboard on an instrument."
-  (%available-range (instrument-string-length instrument)
+(defun half-step-range (instrument &key start end)
+  "Returns the number of half steps within a range of distance within the fingerboard on an instrument."
+  (%half-step-range (if start
+			(- (instrument-string-length instrument)
+			   start)
+			(instrument-string-length instrument))
+			  
 		    0
-		    (instrument-fingerboard-length instrument)))
+		    (or end
+			(instrument-fingerboard-length instrument))
+		    (instrument-string-length instrument)))
 
 (defun distance-between-halfsteps (instrument s1 s2)
   "Returns the distance in millimeters between two halfstep increments."
-  (abs (- (half-step-distance instrument s1)
-	  (half-step-distance instrument s2))))
+  (abs (- (half-step-location instrument s1)
+	  (half-step-location instrument s2))))
 
 (defun upper-bound (instrument)
   (pitch:pitch-transpose
    (reduce #'pitch:max-pitch (instrument-strings instrument))
-   (available-range instrument)))
+   (half-step-range instrument)))
 
 (defun lower-bound (instrument)
   (reduce #'pitch:min-pitch (instrument-strings instrument)))
 
-(defun range (instrument)
+(defun instrument-range (instrument)
   (values (lower-bound instrument)
 	  (upper-bound instrument)))
+
+(defun range-from-location (instrument half-step reach)
+  "Returns the available half steps from a given half step and reach in mm."
+  (let ((base (half-step-location instrument half-step)))
+    (half-step-range instrument
+		     :start base
+		     :end (+ base reach))))
 

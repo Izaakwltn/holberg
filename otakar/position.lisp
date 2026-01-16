@@ -15,6 +15,9 @@
 
 ;;; going up the fingerboard, your hand can potentially cover more frets
 
-;;; instrument will be defined with 
+;;; the default reach is the 
 (defstruct hand-frame
-  (reach ))
+  ;; in mm
+  (reach 113 :type number))
+
+;; finger: 

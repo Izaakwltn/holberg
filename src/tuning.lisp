@@ -30,6 +30,7 @@
 ;;; Equal temperament
 ;;;
 
+(declaim (ftype (function (single-float integer) single-float) %equal-step))
 (defun %equal-step (freq n)
   (cond ((zerop n)
 	 freq)
@@ -43,8 +44,8 @@
 (declaim (ftype (function (pitch:pitch) single-float)))
 (defun equal-temperament (pitch)
   "Returns the equal temperament frequency of a pitch."
-  (%equal-step *reference-pitch* (pitch:pitch-interval *reference-pitch*
-						       pitch)))
+  (%equal-step *reference-freq* (pitch:pitch-interval *reference-pitch*
+							  pitch)))
 
 ;;; Add pythagorean, five-limit, just tunings
 
